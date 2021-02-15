@@ -1,0 +1,1497 @@
+###Risk score density and box plots
+library(ggplot2)
+dat <- read.csv("C:/Users/Cyyr/Desktop/LabFiles/Regeneron/RiskScores/CombinedScorePlotImpNoAmbig.csv",header=T)
+Eur<-dat[dat$RACE_OMRI=="EUR",]
+AJ<-dat[dat$RACE_OMRI=="AJ",]
+AA<-dat[dat$RACE_OMRI=="AA",]
+His<-dat[dat$RACE_OMRI=="HIS",]
+#Box plots reordered and recolored to match other figures
+dat$Population <- factor(dat$Population, levels = c('EURcase','EURcontrol','AJcase','AJcontrol','HIScase','HIScontrol','AAcase','AAcontrol'))
+ggplot(dat, aes(y=Liu42)) + geom_boxplot(aes(fill=Population),outlier.shape=NA)+ scale_fill_manual(values = c("tomato1","tomato4","chartreuse1","chartreuse4","skyblue1","skyblue3","mediumorchid1","mediumorchid3"))
+ggplot(dat, aes(y=Brant18)) + geom_boxplot(aes(fill=Population),outlier.shape=NA)+ scale_fill_manual(values = c("tomato1","tomato4","chartreuse1","chartreuse4","skyblue1","skyblue3","mediumorchid1","mediumorchid3"))
+ggplot(dat, aes(y=LiuPRSice)) + geom_boxplot(aes(fill=Population),outlier.shape=NA)+ scale_fill_manual(values = c("tomato1","tomato4","chartreuse1","chartreuse4","skyblue1","skyblue3","mediumorchid1","mediumorchid3"))
+
+
+
+###logistic regression (case/control risk scores)
+#Liu et al association data
+dat <- read.csv("C:/Users/Cyyr/Desktop/LabFiles/Regeneron/RiskScores/CombinedScorePlotImpNoAmbig.csv",header=T)
+Eur<-dat[dat$RACE_OMRI=="EUR",]
+AJ<-dat[dat$RACE_OMRI=="AJ",]
+AA<-dat[dat$RACE_OMRI=="AA",]
+His<-dat[dat$RACE_OMRI=="HIS",]
+EurResultsLiu<-NA
+AJresultsLiu<-NA
+AAresultsLiu<-NA
+HisResultsLiu<-NA
+for (x in 12:36){
+test<-glm(formula = Eur$IBD ~ Eur[,x] + Eur$GENDER + Eur$AGE,family="binomial")
+EurResultsLiu[x-11]<-coef(summary(test))[2,4]
+}
+for (x in 12:36){
+test<-glm(formula = AJ$IBD ~ AJ[,x] + AJ$GENDER + AJ$AGE,family="binomial")
+AJresultsLiu[x-11]<-coef(summary(test))[2,4]
+}
+for (x in 12:36){
+test<-glm(formula = AA$IBD ~ AA[,x] + AA$GENDER + AA$AGE,family="binomial")
+AAresultsLiu[x-11]<-coef(summary(test))[2,4]
+}
+for (x in 12:36){
+test<-glm(formula = His$IBD ~ His[,x] + His$GENDER + His$AGE,family="binomial")
+HisResultsLiu[x-11]<-coef(summary(test))[2,4]
+}
+
+#Brant et al association data
+EurResultsBrant<-NA
+AJresultsBrant<-NA
+AAresultsBrant<-NA
+HisResultsBrant<-NA
+for (x in 37:61){
+test<-glm(formula = Eur$IBD ~ Eur[,x] + Eur$GENDER + Eur$AGE,family="binomial")
+EurResultsBrant[x-36]<-coef(summary(test))[2,4]
+}
+for (x in 37:61){
+test<-glm(formula = AJ$IBD ~ AJ[,x] + AJ$GENDER + AJ$AGE,family="binomial")
+AJresultsBrant[x-36]<-coef(summary(test))[2,4]
+}
+for (x in 37:61){
+test<-glm(formula = AA$IBD ~ AA[,x] + AA$GENDER + AA$AGE,family="binomial")
+AAresultsBrant[x-36]<-coef(summary(test))[2,4]
+}
+for (x in 37:61){
+test<-glm(formula = His$IBD ~ His[,x] + His$GENDER + His$AGE,family="binomial")
+HisResultsBrant[x-36]<-coef(summary(test))[2,4]
+}
+
+
+#Hui AJ association data
+EurResultsHui<-NA
+AJresultsHui<-NA
+AAresultsHui<-NA
+HisResultsHui<-NA
+for (x in 62:86){
+test<-glm(formula = Eur$IBD ~ Eur[,x] + Eur$GENDER + Eur$AGE,family="binomial")
+EurResultsHui[x-61]<-coef(summary(test))[2,4]
+}
+for (x in 62:86){
+test<-glm(formula = AJ$IBD ~ AJ[,x] + AJ$GENDER + AJ$AGE,family="binomial")
+AJresultsHui[x-61]<-coef(summary(test))[2,4]
+}
+for (x in 62:86){
+test<-glm(formula = AA$IBD ~ AA[,x] + AA$GENDER + AA$AGE,family="binomial")
+AAresultsHui[x-61]<-coef(summary(test))[2,4]
+}
+for (x in 62:86){
+test<-glm(formula = His$IBD ~ His[,x] + His$GENDER + His$AGE,family="binomial")
+HisResultsHui[x-61]<-coef(summary(test))[2,4]
+}
+
+#Meta GWAS association data
+EurResultsMeta<-NA
+AJresultsMeta<-NA
+AAresultsMeta<-NA
+HisResultsMeta<-NA
+for (x in 87:111){
+test<-glm(formula = Eur$IBD ~ Eur[,x] + Eur$GENDER + Eur$AGE,family="binomial")
+EurResultsMeta[x-86]<-coef(summary(test))[2,4]
+}
+for (x in 87:111){
+test<-glm(formula = AJ$IBD ~ AJ[,x] + AJ$GENDER + AJ$AGE,family="binomial")
+AJresultsMeta[x-86]<-coef(summary(test))[2,4]
+}
+for (x in 87:111){
+test<-glm(formula = AA$IBD ~ AA[,x] + AA$GENDER + AA$AGE,family="binomial")
+AAresultsMeta[x-86]<-coef(summary(test))[2,4]
+}
+for (x in 87:111){
+test<-glm(formula = His$IBD ~ His[,x] + His$GENDER + His$AGE,family="binomial")
+HisResultsMeta[x-86]<-coef(summary(test))[2,4]
+}
+
+
+#Generate heat plot for risk score regression p-values
+AllResults<-matrix(
+	c(EurResultsLiu,AJresultsLiu,HisResultsLiu,AAresultsLiu,EurResultsBrant,AJresultsBrant,HisResultsBrant,AAresultsBrant,EurResultsHui,AJresultsHui,HisResultsHui,AAresultsHui,EurResultsMeta,AJresultsMeta,HisResultsMeta,AAresultsMeta),
+	nrow=25,
+	ncol=16)
+colnames(AllResults)<-c("LiuEuropean","LiuAJ","LiuHispanic","LiuAA","BrantEuropean","BrantAJ","BrantHispanic","BrantAA","HuiEuropean","HuiAJ","HuiHispanic","HuiAA","MetaEuropean","MetaAJ","MetaHispanic","MetaAA")
+rownames(AllResults)<-c("02","04","06","08","12","14","16","18","22","24","26","28","42","44","46","48","62","64","66","68","82","84","86","88","PRSice2")
+#write AllResults as table
+#write.csv(AllResults,"C:/Users/Cyyr/Desktop/LabFiles/Regeneron/RiskScores/ImpRegResults.csv",quote=F)
+
+library(gplots)
+dat2<-as.matrix(AllResults)
+dat3<-log10(dat2)*-1
+heatmap.2( dat3,
+           col = colorpanel(100,"green","white","red"),
+           margins = c(12, 22),
+           trace = "none", 
+           xlab = "Biobank Population",
+           lhei = c(2, 8),
+           scale = c("none"),
+           symbreaks = min(dat2, na.rm=TRUE),
+		   key.title = NA,
+           na.color="grey80",
+           cexRow = 0.5, cexCol = 0.7,
+           main = "IBD prediction (-log10(p-val))", 
+           dendrogram = "none", 
+           Colv = FALSE ,
+		   Rowv= FALSE)
+
+###Logistic regression (100 iterations with randomly selected half of cases/controls each)
+#Liu et al association data
+dat <- read.csv("C:/Users/Cyyr/Desktop/LabFiles/Regeneron/RiskScores/CombinedScorePlotImpNoAmbig.csv",header=T)
+EURcase<-dat[dat$Population=="EURcase",]
+EURcontrol<-dat[dat$Population=="EURcontrol",]
+AJcase<-dat[dat$Population=="AJcase",]
+AJcontrol<-dat[dat$Population=="AJcontrol",]
+AAcase<-dat[dat$Population=="AAcase",]
+AAcontrol<-dat[dat$Population=="AAcontrol",]
+HIScase<-dat[dat$Population=="HIScase",]
+HIScontrol<-dat[dat$Population=="HIScontrol",]
+#set up training/validation sets for each population
+AllResultsSum<-	matrix(data=0,nrow=25,ncol=16)
+for (y in 1:100){
+set.seed(y)
+sampleEURcase <- sample.int(n = nrow(EURcase), size = floor(.5*nrow(EURcase)), replace = F)
+sampleEURcontrol <- sample.int(n = nrow(EURcontrol), size = floor(.5*nrow(EURcontrol)), replace = F)
+EURcaseT <- EURcase[sampleEURcase, ]
+EURcontrolT <- EURcontrol[sampleEURcontrol, ]
+EURcaseV  <- EURcase[-sampleEURcase, ]
+EURcontrolV  <- EURcontrol[-sampleEURcontrol, ]
+EURT<-rbind(EURcaseT, EURcontrolT)
+EURV<-rbind(EURcaseV, EURcontrolV)
+sampleAJcase <- sample.int(n = nrow(AJcase), size = floor(.5*nrow(AJcase)), replace = F)
+sampleAJcontrol <- sample.int(n = nrow(AJcontrol), size = floor(.5*nrow(AJcontrol)), replace = F)
+AJcaseT <- AJcase[sampleAJcase, ]
+AJcontrolT <- AJcontrol[sampleAJcontrol, ]
+AJcaseV  <- AJcase[-sampleAJcase, ]
+AJcontrolV  <- AJcontrol[-sampleAJcontrol, ]
+AJT<-rbind(AJcaseT, AJcontrolT)
+AJV<-rbind(AJcaseV, AJcontrolV)
+sampleAAcase <- sample.int(n = nrow(AAcase), size = floor(.5*nrow(AAcase)), replace = F)
+sampleAAcontrol <- sample.int(n = nrow(AAcontrol), size = floor(.5*nrow(AAcontrol)), replace = F)
+AAcaseT <- AAcase[sampleAAcase, ]
+AAcontrolT <- AAcontrol[sampleAAcontrol, ]
+AAcaseV  <- AAcase[-sampleAAcase, ]
+AAcontrolV  <- AAcontrol[-sampleAAcontrol, ]
+AAT<-rbind(AAcaseT, AAcontrolT)
+AAV<-rbind(AAcaseV, AAcontrolV)
+sampleHIScase <- sample.int(n = nrow(HIScase), size = floor(.5*nrow(HIScase)), replace = F)
+sampleHIScontrol <- sample.int(n = nrow(HIScontrol), size = floor(.5*nrow(HIScontrol)), replace = F)
+HIScaseT <- HIScase[sampleHIScase, ]
+HIScontrolT <- HIScontrol[sampleHIScontrol, ]
+HIScaseV  <- HIScase[-sampleHIScase, ]
+HIScontrolV  <- HIScontrol[-sampleHIScontrol, ]
+HIST<-rbind(HIScaseT, HIScontrolT)
+HISV<-rbind(HIScaseV, HIScontrolV)
+
+
+EurResultsLiu<-NA
+AJresultsLiu<-NA
+AAresultsLiu<-NA
+HisResultsLiu<-NA
+for (x in 12:36){
+test<-glm(formula = EURT$IBD ~ EURT[,x] + EURT$GENDER + EURT$AGE,family="binomial")
+EurResultsLiu[x-11]<-coef(summary(test))[2,4]
+}
+for (x in 12:36){
+test<-glm(formula = AJT$IBD ~ AJT[,x] + AJT$GENDER + AJT$AGE,family="binomial")
+AJresultsLiu[x-11]<-coef(summary(test))[2,4]
+}
+for (x in 12:36){
+test<-glm(formula = AAT$IBD ~ AAT[,x] + AAT$GENDER + AAT$AGE,family="binomial")
+AAresultsLiu[x-11]<-coef(summary(test))[2,4]
+}
+for (x in 12:36){
+test<-glm(formula = HIST$IBD ~ HIST[,x] + HIST$GENDER + HIST$AGE,family="binomial")
+HisResultsLiu[x-11]<-coef(summary(test))[2,4]
+}
+
+#Brant et al association data
+EurResultsBrant<-NA
+AJresultsBrant<-NA
+AAresultsBrant<-NA
+HisResultsBrant<-NA
+for (x in 37:61){
+test<-glm(formula = EURT$IBD ~ EURT[,x] + EURT$GENDER + EURT$AGE,family="binomial")
+EurResultsBrant[x-36]<-coef(summary(test))[2,4]
+}
+for (x in 37:61){
+test<-glm(formula = AJT$IBD ~ AJT[,x] + AJT$GENDER + AJT$AGE,family="binomial")
+AJresultsBrant[x-36]<-coef(summary(test))[2,4]
+}
+for (x in 37:61){
+test<-glm(formula = AAT$IBD ~ AAT[,x] + AAT$GENDER + AAT$AGE,family="binomial")
+AAresultsBrant[x-36]<-coef(summary(test))[2,4]
+}
+for (x in 37:61){
+test<-glm(formula = HIST$IBD ~ HIST[,x] + HIST$GENDER + HIST$AGE,family="binomial")
+HisResultsBrant[x-36]<-coef(summary(test))[2,4]
+}
+
+
+#Hui AJ association data
+EurResultsHui<-NA
+AJresultsHui<-NA
+AAresultsHui<-NA
+HisResultsHui<-NA
+for (x in 62:86){
+test<-glm(formula = EURT$IBD ~ EURT[,x] + EURT$GENDER + EURT$AGE,family="binomial")
+EurResultsHui[x-61]<-coef(summary(test))[2,4]
+}
+for (x in 62:86){
+test<-glm(formula = AJT$IBD ~ AJT[,x] + AJT$GENDER + AJT$AGE,family="binomial")
+AJresultsHui[x-61]<-coef(summary(test))[2,4]
+}
+for (x in 62:86){
+test<-glm(formula = AAT$IBD ~ AAT[,x] + AAT$GENDER + AAT$AGE,family="binomial")
+AAresultsHui[x-61]<-coef(summary(test))[2,4]
+}
+for (x in 62:86){
+test<-glm(formula = HIST$IBD ~ HIST[,x] + HIST$GENDER + HIST$AGE,family="binomial")
+HisResultsHui[x-61]<-coef(summary(test))[2,4]
+}
+
+#Meta association data
+EurResultsMeta<-NA
+AJresultsMeta<-NA
+AAresultsMeta<-NA
+HisResultsMeta<-NA
+for (x in 87:111){
+test<-glm(formula = EURT$IBD ~ EURT[,x] + EURT$GENDER + EURT$AGE,family="binomial")
+EurResultsMeta[x-86]<-coef(summary(test))[2,4]
+}
+for (x in 87:111){
+test<-glm(formula = AJT$IBD ~ AJT[,x] + AJT$GENDER + AJT$AGE,family="binomial")
+AJresultsMeta[x-86]<-coef(summary(test))[2,4]
+}
+for (x in 87:111){
+test<-glm(formula = AAT$IBD ~ AAT[,x] + AAT$GENDER + AAT$AGE,family="binomial")
+AAresultsMeta[x-86]<-coef(summary(test))[2,4]
+}
+for (x in 87:111){
+test<-glm(formula = HIST$IBD ~ HIST[,x] + HIST$GENDER + HIST$AGE,family="binomial")
+HisResultsMeta[x-86]<-coef(summary(test))[2,4]
+}
+
+
+#Generate heat plot for risk score regression p-values
+AllResults<-matrix(
+	c(EurResultsLiu,AJresultsLiu,HisResultsLiu,AAresultsLiu,EurResultsBrant,AJresultsBrant,HisResultsBrant,AAresultsBrant,EurResultsHui,AJresultsHui,HisResultsHui,AAresultsHui,EurResultsMeta,AJresultsMeta,HisResultsMeta,AAresultsMeta),
+	nrow=25,
+	ncol=16)
+colnames(AllResults)<-c("LiuEuropean","LiuAJ","LiuHispanic","LiuAA","BrantEuropean","BrantAJ","BrantHispanic","BrantAA","HuiEuropean","HuiAJ","HuiHispanic","HuiAA","MetaEuropean","MetaAJ","MetaHispanic","MetaAA")
+rownames(AllResults)<-c("02","04","06","08","12","14","16","18","22","24","26","28","42","44","46","48","62","64","66","68","82","84","86","88","PRSice2")
+AllResultsSum<-AllResultsSum+AllResults
+}
+AllResultsAvg<-AllResultsSum/100
+write.csv(AllResultsAvg,"C:/Users/Cyyr/Desktop/LabFiles/Regeneron/RiskScores/IterationsPredictTable.csv",quote=F)
+library(gplots)
+dat2<-as.matrix(AllResultsAvg)
+dat3<-log10(dat2)*-1
+heatmap.2( dat3,
+           col = colorpanel(100,"green","white","red"),
+           margins = c(12, 22),
+           trace = "none", 
+           xlab = "Biobank Population",
+           lhei = c(2, 8),
+           scale = c("none"),
+           symbreaks = min(dat2, na.rm=TRUE),
+		   key.title = NA,
+           na.color="grey80",
+           cexRow = 0.5, cexCol = 0.7,
+           main = "IBD prediction (-log10(p-val))", 
+           dendrogram = "none", 
+           Colv = FALSE ,
+		   Rowv= FALSE)
+
+###Run cross validation for multi-ethnic risk scores (100 iterations)
+library(DAAG)
+library(pROC)
+library(boot)
+
+dat <- read.csv("C:/Users/Cyyr/Desktop/LabFiles/Regeneron/RiskScores/CombinedScorePlotImpNoAmbig.csv",header=T)
+dat<-na.omit(dat)
+Eur<-dat[dat$RACE_OMRI=="EUR"&!is.na(dat$LRRK2at40740686)&dat$GENDER!="Unknown",]
+AJ<-dat[dat$RACE_OMRI=="AJ"&!is.na(dat$LRRK2at40740686)&dat$GENDER!="Unknown",]
+AA<-dat[dat$RACE_OMRI=="AA"&!is.na(dat$LRRK2at40740686)&dat$GENDER!="Unknown",]
+His<-dat[dat$RACE_OMRI=="HIS"&!is.na(dat$LRRK2at40740686)&dat$GENDER!="Unknown",]
+#initialize each AUC and MSE value at 0, and K-fold number to 3
+z<-3
+
+EurPhenoAUC<-0
+EurGenoAUC<-0
+EurLiuAUC<-0
+EurLiuGenoAUC<-0
+EurBrantAUC<-0
+EurBrantGenoAUC<-0
+EurHuiAUC<-0
+EurHuiGenoAUC<-0
+EurMetaAUC<-0
+EurMetaGenoAUC<-0
+EurLiuHuiAUC<-0
+EurLiuHuiGenoAUC<-0
+EurLiuBrantAUC<-0
+EurLiuBrantGenoAUC<-0
+EurCombinedAUC<-0
+EurCombinedGenoAUC<-0
+HisPhenoAUC<-0
+HisGenoAUC<-0
+HisLiuAUC<-0
+HisLiuGenoAUC<-0
+HisBrantAUC<-0
+HisBrantGenoAUC<-0
+HisHuiAUC<-0
+HisHuiGenoAUC<-0
+HisMetaAUC<-0
+HisMetaGenoAUC<-0
+HisLiuHuiAUC<-0
+HisLiuHuiGenoAUC<-0
+HisLiuBrantAUC<-0
+HisLiuBrantGenoAUC<-0
+HisCombinedAUC<-0
+HisCombinedGenoAUC<-0
+AAPhenoAUC<-0
+AAGenoAUC<-0
+AALiuAUC<-0
+AALiuGenoAUC<-0
+AABrantAUC<-0
+AABrantGenoAUC<-0
+AAHuiAUC<-0
+AAHuiGenoAUC<-0
+AAMetaAUC<-0
+AAMetaGenoAUC<-0
+AALiuHuiAUC<-0
+AALiuHuiGenoAUC<-0
+AALiuBrantAUC<-0
+AALiuBrantGenoAUC<-0
+AACombinedAUC<-0
+AACombinedGenoAUC<-0
+AJPhenoAUC<-0
+AJGenoAUC<-0
+AJLiuAUC<-0
+AJLiuGenoAUC<-0
+AJBrantAUC<-0
+AJBrantGenoAUC<-0
+AJHuiAUC<-0
+AJHuiGenoAUC<-0
+AJMetaAUC<-0
+AJMetaGenoAUC<-0
+AJLiuHuiAUC<-0
+AJLiuHuiGenoAUC<-0
+AJLiuBrantAUC<-0
+AJLiuBrantGenoAUC<-0
+AJCombinedAUC<-0
+AJCombinedGenoAUC<-0
+
+EurPhenoErr<-0
+EurGenoErr<-0
+EurLiuErr<-0
+EurLiuGenoErr<-0
+EurBrantErr<-0
+EurBrantGenoErr<-0
+EurHuiErr<-0
+EurHuiGenoErr<-0
+EurMetaErr<-0
+EurMetaGenoErr<-0
+EurLiuHuiErr<-0
+EurLiuHuiGenoErr<-0
+EurLiuBrantErr<-0
+EurLiuBrantGenoErr<-0
+EurCombinedErr<-0
+EurCombinedGenoErr<-0
+HisPhenoErr<-0
+HisGenoErr<-0
+HisLiuErr<-0
+HisLiuGenoErr<-0
+HisBrantErr<-0
+HisBrantGenoErr<-0
+HisHuiErr<-0
+HisHuiGenoErr<-0
+HisMetaErr<-0
+HisMetaGenoErr<-0
+HisLiuHuiErr<-0
+HisLiuHuiGenoErr<-0
+HisLiuBrantErr<-0
+HisLiuBrantGenoErr<-0
+HisCombinedErr<-0
+HisCombinedGenoErr<-0
+AAPhenoErr<-0
+AAGenoErr<-0
+AALiuErr<-0
+AALiuGenoErr<-0
+AABrantErr<-0
+AABrantGenoErr<-0
+AAHuiErr<-0
+AAHuiGenoErr<-0
+AAMetaErr<-0
+AAMetaGenoErr<-0
+AALiuHuiErr<-0
+AALiuHuiGenoErr<-0
+AALiuBrantErr<-0
+AALiuBrantGenoErr<-0
+AACombinedErr<-0
+AACombinedGenoErr<-0
+AJPhenoErr<-0
+AJGenoErr<-0
+AJLiuErr<-0
+AJLiuGenoErr<-0
+AJBrantErr<-0
+AJBrantGenoErr<-0
+AJHuiErr<-0
+AJHuiGenoErr<-0
+AJMetaErr<-0
+AJMetaGenoErr<-0
+AJLiuHuiErr<-0
+AJLiuHuiGenoErr<-0
+AJLiuBrantErr<-0
+AJLiuBrantGenoErr<-0
+AJCombinedErr<-0
+AJCombinedGenoErr<-0
+
+#Run 100 interations of cross validation for each model based on 3 (or z if replaced) K-folds, then take average AUC and MSE for each model across the 100 runs
+for (y in 1:100){
+EurPheno<-glm(data = Eur, formula = IBD ~ GENDER + AGE,family="binomial")
+EurPhenoErr<-EurPhenoErr+cv.glm(data=Eur,glmfit=EurPheno,K=z)$delta[2]
+EurPhenoAUC<-EurPhenoAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE,family="binomial")), smooth=TRUE)$auc)
+
+EurGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurGenoErr<-EurGenoErr+cv.glm(data=Eur,glmfit=EurGeno,K=z)$delta[2]
+EurGenoAUC<-EurGenoAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+EurLiu<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82,family="binomial")
+EurLiuErr<-EurLiuErr+cv.glm(data=Eur,glmfit=EurLiu,K=z)$delta[2]
+EurLiuAUC<-EurLiuAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82),family="binomial"), smooth=TRUE)$auc)
+
+EurLiuGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurLiuGenoErr<-EurLiuGenoErr+cv.glm(data=Eur,glmfit=EurLiuGeno,K=z)$delta[2]
+EurLiuGenoAUC<-EurLiuGenoAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+EurBrant<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Brant08,family="binomial")
+EurBrantErr<-EurBrantErr+cv.glm(data=Eur,glmfit=EurBrant,K=z)$delta[2]
+EurBrantAUC<-EurBrantAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Brant08,family="binomial")), smooth=TRUE)$auc)
+
+EurBrantGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Brant08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurBrantGenoErr<-EurBrantGenoErr+cv.glm(data=Eur,glmfit=EurBrantGeno,K=z)$delta[2]
+EurBrantGenoAUC<-EurBrantGenoAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Brant08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+EurHui<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Hui08,family="binomial")
+EurHuiErr<-EurHuiErr+cv.glm(data=Eur,glmfit=EurHui,K=z)$delta[2]
+EurHuiAUC<-EurHuiAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Hui08,family="binomial")), smooth=TRUE)$auc)
+
+EurHuiGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurHuiGenoErr<-EurHuiGenoErr+cv.glm(data=Eur,glmfit=EurHuiGeno,K=z)$delta[2]
+EurHuiGenoAUC<-EurHuiGenoAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+EurMeta<-glm(data = Eur, formula = IBD ~ GENDER + AGE + MetaPRSice,family="binomial")
+EurMetaErr<-EurMetaErr+cv.glm(data=Eur,glmfit=EurMeta,K=z)$delta[2]
+EurMetaAUC<-EurMetaAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + MetaPRSice,family="binomial")), smooth=TRUE)$auc)
+
+EurMetaGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + MetaPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurMetaGenoErr<-EurMetaGenoErr+cv.glm(data=Eur,glmfit=EurMetaGeno,K=z)$delta[2]
+EurMetaGenoAUC<-EurMetaGenoAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + MetaPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+EurLiuHui<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08,family="binomial")
+EurLiuHuiErr<-EurLiuHuiErr+cv.glm(data=Eur,glmfit=EurLiuHui,K=z)$delta[2]
+EurLiuHuiAUC<-EurLiuHuiAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08,family="binomial")), smooth=TRUE)$auc)
+
+EurLiuHuiGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurLiuHuiGenoErr<-EurLiuHuiGenoErr+cv.glm(data=Eur,glmfit=EurLiuHuiGeno,K=z)$delta[2]
+EurLiuHuiGenoAUC<-EurLiuHuiGenoAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+EurLiuBrant<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Brant08,family="binomial")
+EurLiuBrantErr<-EurLiuBrantErr+cv.glm(data=Eur,glmfit=EurLiuBrant,K=z)$delta[2]
+EurLiuBrantAUC<-EurLiuBrantAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Brant08,family="binomial")), smooth=TRUE)$auc)
+
+EurLiuBrantGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Brant08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurLiuBrantGenoErr<-EurLiuBrantGenoErr+cv.glm(data=Eur,glmfit=EurLiuBrantGeno,K=z)$delta[2]
+EurLiuBrantGenoAUC<-EurLiuBrantGenoAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Brant08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+EurCombined<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant08,family="binomial")
+EurCombinedErr<-EurCombinedErr+cv.glm(data=Eur,glmfit=EurCombined,K=z)$delta[2]
+EurCombinedAUC<-EurCombinedAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant08,family="binomial")), smooth=TRUE)$auc)
+
+EurCombinedGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurCombinedGenoErr<-EurCombinedGenoErr+cv.glm(data=Eur,glmfit=EurCombinedGeno,K=z)$delta[2]
+EurCombinedGenoAUC<-EurCombinedGenoAUC+as.numeric(roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+HisPheno<-glm(data = His, formula = IBD ~ GENDER + AGE,family="binomial")
+HisPhenoErr<-HisPhenoErr+cv.glm(data=His,glmfit=HisPheno,K=z)$delta[2]
+HisPhenoAUC<-HisPhenoAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE,family="binomial")), smooth=TRUE)$auc)
+
+HisGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisGenoErr<-HisGenoErr+cv.glm(data=His,glmfit=HisGeno,K=z)$delta[2]
+HisGenoAUC<-HisGenoAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+HisLiu<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice,family="binomial")
+HisLiuErr<-HisLiuErr+cv.glm(data=His,glmfit=HisLiu,K=z)$delta[2]
+HisLiuAUC<-HisLiuAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice,family="binomial")), smooth=TRUE)$auc)
+
+HisLiuGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisLiuGenoErr<-HisLiuGenoErr+cv.glm(data=His,glmfit=HisLiuGeno,K=z)$delta[2]
+HisLiuGenoAUC<-HisLiuGenoAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+HisBrant<-glm(data = His, formula = IBD ~ GENDER + AGE + Brant48,family="binomial")
+HisBrantErr<-HisBrantErr+cv.glm(data=His,glmfit=HisBrant,K=z)$delta[2]
+HisBrantAUC<-HisBrantAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + Brant48,family="binomial")), smooth=TRUE)$auc)
+
+HisBrantGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisBrantGenoErr<-HisBrantGenoErr+cv.glm(data=His,glmfit=HisBrantGeno,K=z)$delta[2]
+HisBrantGenoAUC<-HisBrantGenoAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+HisHui<-glm(data = His, formula = IBD ~ GENDER + AGE + Hui48,family="binomial")
+HisHuiErr<-HisHuiErr+cv.glm(data=His,glmfit=HisHui,K=z)$delta[2]
+HisHuiAUC<-HisHuiAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + Hui48,family="binomial")), smooth=TRUE)$auc)
+
+HisHuiGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + Hui48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisHuiGenoErr<-HisHuiGenoErr+cv.glm(data=His,glmfit=HisHuiGeno,K=z)$delta[2]
+HisHuiGenoAUC<-HisHuiGenoAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + Hui48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+HisMeta<-glm(data = His, formula = IBD ~ GENDER + AGE + Meta82,family="binomial")
+HisMetaErr<-HisMetaErr+cv.glm(data=His,glmfit=HisMeta,K=z)$delta[2]
+HisMetaAUC<-HisMetaAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + Meta82,family="binomial")), smooth=TRUE)$auc)
+
+HisMetaGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + Meta82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisMetaGenoErr<-HisMetaGenoErr+cv.glm(data=His,glmfit=HisMetaGeno,K=z)$delta[2]
+HisMetaGenoAUC<-HisMetaGenoAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + Meta82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+HisLiuHui<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48,family="binomial")
+HisLiuHuiErr<-HisLiuHuiErr+cv.glm(data=His,glmfit=HisLiuHui,K=z)$delta[2]
+HisLiuHuiAUC<-HisLiuHuiAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48,family="binomial")), smooth=TRUE)$auc)
+
+HisLiuHuiGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisLiuHuiGenoErr<-HisLiuHuiGenoErr+cv.glm(data=His,glmfit=HisLiuHuiGeno,K=z)$delta[2]
+HisLiuHuiGenoAUC<-HisLiuHuiGenoAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+HisLiuBrant<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Brant48,family="binomial")
+HisLiuBrantErr<-HisLiuBrantErr+cv.glm(data=His,glmfit=HisLiuBrant,K=z)$delta[2]
+HisLiuBrantAUC<-HisLiuBrantAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Brant48,family="binomial")), smooth=TRUE)$auc)
+
+HisLiuBrantGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisLiuBrantGenoErr<-HisLiuBrantGenoErr+cv.glm(data=His,glmfit=HisLiuBrantGeno,K=z)$delta[2]
+HisLiuBrantGenoAUC<-HisLiuBrantGenoAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+HisCombined<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48 + Brant48,family="binomial")
+HisCombinedErr<-HisCombinedErr+cv.glm(data=His,glmfit=HisCombined,K=z)$delta[2]
+HisCombinedAUC<-HisCombinedAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48 + Brant48,family="binomial")), smooth=TRUE)$auc)
+
+HisCombinedGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48 + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisCombinedGenoErr<-HisCombinedGenoErr+cv.glm(data=His,glmfit=HisCombinedGeno,K=z)$delta[2]
+HisCombinedGenoAUC<-HisCombinedGenoAUC+as.numeric(roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48 + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AAPheno<-glm(data = AA, formula = IBD ~ GENDER + AGE,family="binomial")
+AAPhenoErr<-AAPhenoErr+cv.glm(data=AA,glmfit=AAPheno,K=z)$delta[2]
+AAPhenoAUC<-AAPhenoAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE,family="binomial")), smooth=TRUE)$auc)
+
+AAGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AAGenoErr<-AAGenoErr+cv.glm(data=AA,glmfit=AAGeno,K=z)$delta[2]
+AAGenoAUC<-AAGenoAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AALiu<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28,family="binomial")
+AALiuErr<-AALiuErr+cv.glm(data=AA,glmfit=AALiu,K=z)$delta[2]
+AALiuAUC<-AALiuAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28,family="binomial")), smooth=TRUE)$auc)
+
+AALiuGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AALiuGenoErr<-AALiuGenoErr+cv.glm(data=AA,glmfit=AALiuGeno,K=z)$delta[2]
+AALiuGenoAUC<-AALiuGenoAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AABrant<-glm(data = AA, formula = IBD ~ GENDER + AGE + BrantPRSice,family="binomial")
+AABrantErr<-AABrantErr+cv.glm(data=AA,glmfit=AABrant,K=z)$delta[2]
+AABrantAUC<-AABrantAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + BrantPRSice,family="binomial")), smooth=TRUE)$auc)
+
+AABrantGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + BrantPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AABrantGenoErr<-AABrantGenoErr+cv.glm(data=AA,glmfit=AABrantGeno,K=z)$delta[2]
+AABrantGenoAUC<-AABrantGenoAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + BrantPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AAHui<-glm(data = AA, formula = IBD ~ GENDER + AGE + Hui28,family="binomial")
+AAHuiErr<-AAHuiErr+cv.glm(data=AA,glmfit=AAHui,K=z)$delta[2]
+AAHuiAUC<-AAHuiAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Hui28,family="binomial")), smooth=TRUE)$auc)
+
+AAHuiGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + Hui28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AAHuiGenoErr<-AAHuiGenoErr+cv.glm(data=AA,glmfit=AAHuiGeno,K=z)$delta[2]
+AAHuiGenoAUC<-AAHuiGenoAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Hui28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AAMeta<-glm(data = AA, formula = IBD ~ GENDER + AGE + Meta28,family="binomial")
+AAMetaErr<-AAMetaErr+cv.glm(data=AA,glmfit=AAMeta,K=z)$delta[2]
+AAMetaAUC<-AAMetaAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Meta28,family="binomial")), smooth=TRUE)$auc)
+
+AAMetaGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + Meta28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AAMetaGenoErr<-AAMetaGenoErr+cv.glm(data=AA,glmfit=AAMetaGeno,K=z)$delta[2]
+AAMetaGenoAUC<-AAMetaGenoAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Meta28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AALiuHui<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28,family="binomial")
+AALiuHuiErr<-AALiuHuiErr+cv.glm(data=AA,glmfit=AALiuHui,K=z)$delta[2]
+AALiuHuiAUC<-AALiuHuiAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28,family="binomial")), smooth=TRUE)$auc)
+
+AALiuHuiGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AALiuHuiGenoErr<-AALiuHuiGenoErr+cv.glm(data=AA,glmfit=AALiuHuiGeno,K=z)$delta[2]
+AALiuHuiGenoAUC<-AALiuHuiGenoAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AALiuBrant<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + BrantPRSice,family="binomial")
+AALiuBrantErr<-AALiuBrantErr+cv.glm(data=AA,glmfit=AALiuBrant,K=z)$delta[2]
+AALiuBrantAUC<-AALiuBrantAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + BrantPRSice,family="binomial")), smooth=TRUE)$auc)
+
+AALiuBrantGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + BrantPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AALiuBrantGenoErr<-AALiuBrantGenoErr+cv.glm(data=AA,glmfit=AALiuBrantGeno,K=z)$delta[2]
+AALiuBrantGenoAUC<-AALiuBrantGenoAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + BrantPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AACombined<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28 + BrantPRSice,family="binomial")
+AACombinedErr<-AACombinedErr+cv.glm(data=AA,glmfit=AACombined,K=z)$delta[2]
+AACombinedAUC<-AACombinedAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28 + BrantPRSice,family="binomial")), smooth=TRUE)$auc)
+
+AACombinedGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28 + BrantPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AACombinedGenoErr<-AACombinedGenoErr+cv.glm(data=AA,glmfit=AACombinedGeno,K=z)$delta[2]
+AACombinedGenoAUC<-AACombinedGenoAUC+as.numeric(roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28 + BrantPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AJPheno<-glm(data = AJ, formula = IBD ~ GENDER + AGE,family="binomial")
+AJPhenoErr<-AJPhenoErr+cv.glm(data=AJ,glmfit=AJPheno,K=z)$delta[2]
+AJPhenoAUC<-AJPhenoAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE,family="binomial")), smooth=TRUE)$auc)
+
+AJGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJGenoErr<-AJGenoErr+cv.glm(data=AJ,glmfit=AJGeno,K=z)$delta[2]
+AJGenoAUC<-AJGenoAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AJLiu<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82,family="binomial")
+AJLiuErr<-AJLiuErr+cv.glm(data=AJ,glmfit=AJLiu,K=z)$delta[2]
+AJLiuAUC<-AJLiuAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82,family="binomial")), smooth=TRUE)$auc)
+
+AJLiuGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJLiuGenoErr<-AJLiuGenoErr+cv.glm(data=AJ,glmfit=AJLiuGeno,K=z)$delta[2]
+AJLiuGenoAUC<-AJLiuGenoAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AJBrant<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Brant48,family="binomial")
+AJBrantErr<-AJBrantErr+cv.glm(data=AJ,glmfit=AJBrant,K=z)$delta[2]
+AJBrantAUC<-AJBrantAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Brant48,family="binomial")), smooth=TRUE)$auc)
+
+AJBrantGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJBrantGenoErr<-AJBrantGenoErr+cv.glm(data=AJ,glmfit=AJBrantGeno,K=z)$delta[2]
+AJBrantGenoAUC<-AJBrantGenoAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AJHui<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Hui08,family="binomial")
+AJHuiErr<-AJHuiErr+cv.glm(data=AJ,glmfit=AJHui,K=z)$delta[2]
+AJHuiAUC<-AJHuiAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Hui08,family="binomial")), smooth=TRUE)$auc)
+
+AJHuiGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJHuiGenoErr<-AJHuiGenoErr+cv.glm(data=AJ,glmfit=AJHuiGeno,K=z)$delta[2]
+AJHuiGenoAUC<-AJHuiGenoAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AJMeta<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Meta82,family="binomial")
+AJMetaErr<-AJMetaErr+cv.glm(data=AJ,glmfit=AJMeta,K=z)$delta[2]
+AJMetaAUC<-AJMetaAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Meta82,family="binomial")), smooth=TRUE)$auc)
+
+AJMetaGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Meta82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJMetaGenoErr<-AJMetaGenoErr+cv.glm(data=AJ,glmfit=AJMetaGeno,K=z)$delta[2]
+AJMetaGenoAUC<-AJMetaGenoAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Meta82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AJLiuHui<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08,family="binomial")
+AJLiuHuiErr<-AJLiuHuiErr+cv.glm(data=AJ,glmfit=AJLiuHui,K=z)$delta[2]
+AJLiuHuiAUC<-AJLiuHuiAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08,family="binomial")), smooth=TRUE)$auc)
+
+AJLiuHuiGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJLiuHuiGenoErr<-AJLiuHuiGenoErr+cv.glm(data=AJ,glmfit=AJLiuHuiGeno,K=z)$delta[2]
+AJLiuHuiGenoAUC<-AJLiuHuiGenoAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AJLiuBrant<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Brant48,family="binomial")
+AJLiuBrantErr<-AJLiuBrantErr+cv.glm(data=AJ,glmfit=AJLiuBrant,K=z)$delta[2]
+AJLiuBrantAUC<-AJLiuBrantAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Brant48,family="binomial")), smooth=TRUE)$auc)
+
+AJLiuBrantGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJLiuBrantGenoErr<-AJLiuBrantGenoErr+cv.glm(data=AJ,glmfit=AJLiuBrantGeno,K=z)$delta[2]
+AJLiuBrantGenoAUC<-AJLiuBrantGenoAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+
+AJCombined<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant48,family="binomial")
+AJCombinedErr<-AJCombinedErr+cv.glm(data=AJ,glmfit=AJCombined,K=z)$delta[2]
+AJCombinedAUC<-AJCombinedAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant48,family="binomial")), smooth=TRUE)$auc)
+
+AJCombinedGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJCombinedGenoErr<-AJCombinedGenoErr+cv.glm(data=AJ,glmfit=AJCombinedGeno,K=z)$delta[2]
+AJCombinedGenoAUC<-AJCombinedGenoAUC+as.numeric(roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")), smooth=TRUE)$auc)
+}
+#Combine data and calculate averages
+AllAUC<-matrix(
+	c(	
+EurPhenoAUC/100,
+EurGenoAUC/100,
+EurLiuAUC/100,
+EurLiuGenoAUC/100,
+EurBrantAUC/100,
+EurBrantGenoAUC/100,
+EurHuiAUC/100,
+EurHuiGenoAUC/100,
+EurMetaAUC/100,
+EurMetaGenoAUC/100,
+EurLiuHuiAUC/100,
+EurLiuHuiGenoAUC/100,
+EurLiuBrantAUC/100,
+EurLiuBrantGenoAUC/100,
+EurCombinedAUC/100,
+EurCombinedGenoAUC/100,
+HisPhenoAUC/100,
+HisGenoAUC/100,
+HisLiuAUC/100,
+HisLiuGenoAUC/100,
+HisBrantAUC/100,
+HisBrantGenoAUC/100,
+HisHuiAUC/100,
+HisHuiGenoAUC/100,
+HisMetaAUC/100,
+HisMetaGenoAUC/100,
+HisLiuHuiAUC/100,
+HisLiuHuiGenoAUC/100,
+HisLiuBrantAUC/100,
+HisLiuBrantGenoAUC/100,
+HisCombinedAUC/100,
+HisCombinedGenoAUC/100,
+AAPhenoAUC/100,
+AAGenoAUC/100,
+AALiuAUC/100,
+AALiuGenoAUC/100,
+AABrantAUC/100,
+AABrantGenoAUC/100,
+AAHuiAUC/100,
+AAHuiGenoAUC/100,
+AAMetaAUC/100,
+AAMetaGenoAUC/100,
+AALiuHuiAUC/100,
+AALiuHuiGenoAUC/100,
+AALiuBrantAUC/100,
+AALiuBrantGenoAUC/100,
+AACombinedAUC/100,
+AACombinedGenoAUC/100,
+AJPhenoAUC/100,
+AJGenoAUC/100,
+AJLiuAUC/100,
+AJLiuGenoAUC/100,
+AJBrantAUC/100,
+AJBrantGenoAUC/100,
+AJHuiAUC/100,
+AJHuiGenoAUC/100,
+AJMetaAUC/100,
+AJMetaGenoAUC/100,
+AJLiuHuiAUC/100,
+AJLiuHuiGenoAUC/100,
+AJLiuBrantAUC/100,
+AJLiuBrantGenoAUC/100,
+AJCombinedAUC/100,
+AJCombinedGenoAUC/100),
+	nrow=16,
+	ncol=4)
+
+AllMSE<-matrix(
+	c(	
+EurPhenoErr/100,
+EurGenoErr/100,
+EurLiuErr/100,
+EurLiuGenoErr/100,
+EurBrantErr/100,
+EurBrantGenoErr/100,
+EurHuiErr/100,
+EurHuiGenoErr/100,
+EurMetaErr/100,
+EurMetaGenoErr/100,
+EurLiuHuiErr/100,
+EurLiuHuiGenoErr/100,
+EurLiuBrantErr/100,
+EurLiuBrantGenoErr/100,
+EurCombinedErr/100,
+EurCombinedGenoErr/100,
+HisPhenoErr/100,
+HisGenoErr/100,
+HisLiuErr/100,
+HisLiuGenoErr/100,
+HisBrantErr/100,
+HisBrantGenoErr/100,
+HisHuiErr/100,
+HisHuiGenoErr/100,
+HisMetaErr/100,
+HisMetaGenoErr/100,
+HisLiuHuiErr/100,
+HisLiuHuiGenoErr/100,
+HisLiuBrantErr/100,
+HisLiuBrantGenoErr/100,
+HisCombinedErr/100,
+HisCombinedGenoErr/100,
+AAPhenoErr/100,
+AAGenoErr/100,
+AALiuErr/100,
+AALiuGenoErr/100,
+AABrantErr/100,
+AABrantGenoErr/100,
+AAHuiErr/100,
+AAHuiGenoErr/100,
+AAMetaErr/100,
+AAMetaGenoErr/100,
+AALiuHuiErr/100,
+AALiuHuiGenoErr/100,
+AALiuBrantErr/100,
+AALiuBrantGenoErr/100,
+AACombinedErr/100,
+AACombinedGenoErr/100,
+AJPhenoErr/100,
+AJGenoErr/100,
+AJLiuErr/100,
+AJLiuGenoErr/100,
+AJBrantErr/100,
+AJBrantGenoErr/100,
+AJHuiErr/100,
+AJHuiGenoErr/100,
+AJMetaErr/100,
+AJMetaGenoErr/100,
+AJLiuHuiErr/100,
+AJLiuHuiGenoErr/100,
+AJLiuBrantErr/100,
+AJLiuBrantGenoErr/100,
+AJCombinedErr/100,
+AJCombinedGenoErr/100),
+	nrow=16,
+	ncol=4)
+	
+colnames(AllAUC)<-c("European AUC","Hispanic AUC","AA AUC","AJ AUC")
+colnames(AllMSE)<-c("European MSE","Hispanic MSE","AA MSE","AJ MSE")
+rownames(AllAUC)<-c("Pheno","Geno","Liu","LiuGeno","Brant","BrantGeno","Hui","HuiGeno","Meta","MetaGeno","LiuHui","LiuHuiGeno","LiuBrant","LiuBrantGeno","AllCombined","AllCombinedGeno")
+rownames(AllMSE)<-c("Pheno","Geno","Liu","LiuGeno","Brant","BrantGeno","Hui","HuiGeno","Meta","MetaGeno","LiuHui","LiuHuiGeno","LiuBrant","LiuBrantGeno","AllCombined","AllCombinedGeno")
+library(reshape2)
+library(ggplot2)
+dfAUC <- melt(AllAUC)
+dfAUC$rowid <- row.names(AllAUC)
+ggplot(dfAUC, aes(Var1, value, group=factor(Var2))) + geom_line(aes(color=factor(Var2)),size=1)
+write.csv(AllAUC,"C:/Users/Cyyr/Desktop/LabFiles/Regeneron/RiskScores/AllAUC.csv",quote=F)
+dfMSE <- melt(AllMSE)
+dfMSE$rowid <- row.names(AllMSE)
+ggplot(dfMSE, aes(Var1, value, group=factor(Var2))) + geom_line(aes(color=factor(Var2)),size=1)
+write.csv(AllMSE,"C:/Users/Cyyr/Desktop/LabFiles/Regeneron/RiskScores/AllMSE.csv",quote=F)
+
+
+###Calculate and plot ORs for top 1, 5, 10, and 50% cutoffs using relevant single-population and best combined predictors
+dat <- read.csv("C:/Users/Cyyr/Desktop/LabFiles/Regeneron/RiskScores/CombinedScorePlotImpNoAmbig.csv",header=T)
+dat<-na.omit(dat)
+Eur<-dat[dat$RACE_OMRI=="EUR"&!is.na(dat$LRRK2at40740686)&!is.na(dat$NOD2at50763781)&dat$GENDER!="Unknown",]
+AJ<-dat[dat$RACE_OMRI=="AJ"&!is.na(dat$LRRK2at40740686)&!is.na(dat$NOD2at50763781)&dat$GENDER!="Unknown",]
+AA<-dat[dat$RACE_OMRI=="AA"&!is.na(dat$LRRK2at40740686)&!is.na(dat$NOD2at50763781)&dat$GENDER!="Unknown",]
+His<-dat[dat$RACE_OMRI=="HIS"&!is.na(dat$LRRK2at40740686)&!is.na(dat$NOD2at50763781)&dat$GENDER!="Unknown",]
+
+#evaluate individual scores for Liu score/age/gender only and combined score/age/gender/top snps models
+Eur[118]<-predict(glm(data=Eur, formula = IBD ~ GENDER + AGE + Liu82,family="binomial"))
+colnames(Eur)[118]<-"LiuEval"
+AJ[118]<-predict(glm(data=AJ, formula = IBD ~ GENDER + AGE + Hui18,family="binomial"))
+colnames(AJ)[118]<-"LiuEval"
+AA[118]<-predict(glm(data=AA, formula = IBD ~ GENDER + AGE + BrantPRSice,family="binomial"))
+colnames(AA)[118]<-"LiuEval"
+His[118]<-predict(glm(data=His, formula = IBD ~ GENDER + AGE + LiuPRSice,family="binomial"))
+colnames(His)[118]<-"LiuEval"
+
+Eur[119]<-predict(glm(data=Eur, formula = IBD ~ GENDER + AGE + MetaPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial"))
+colnames(Eur)[119]<-"Combined"
+AJ[119]<-predict(glm(data=AJ, formula = IBD ~ GENDER + AGE + Meta82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial"))
+colnames(AJ)[119]<-"Combined"
+AA[119]<-predict(glm(data=AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28 + BrantPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial"))
+colnames(AA)[119]<-"Combined"
+His[119]<-predict(glm(data=His, formula = IBD ~ GENDER + AGE + MetaPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial"))
+colnames(His)[119]<-"Combined"
+
+#Store ORs based on lower 50%, top 50%, 20%, 10%, 5% vs. remainder
+EurOR<-NULL
+EurOR[1]<-mean(Eur[Eur$LiuEval < quantile(Eur$LiuEval, 0.50),6])/mean(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.50),6])
+EurOR[2]<-mean(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.50),6])/mean(Eur[Eur$LiuEval < quantile(Eur$LiuEval, 0.50),6])
+EurOR[3]<-mean(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.80),6])/mean(Eur[Eur$LiuEval < quantile(Eur$LiuEval, 0.80),6])
+EurOR[4]<-mean(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.90),6])/mean(Eur[Eur$LiuEval < quantile(Eur$LiuEval, 0.90),6])
+EurOR[5]<-mean(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.95),6])/mean(Eur[Eur$LiuEval < quantile(Eur$LiuEval, 0.95),6])
+EurOR[6]<-mean(Eur[Eur$Combined < quantile(Eur$Combined, 0.50),6])/mean(Eur[Eur$Combined > quantile(Eur$Combined, 0.50),6])
+EurOR[7]<-mean(Eur[Eur$Combined > quantile(Eur$Combined, 0.50),6])/mean(Eur[Eur$Combined < quantile(Eur$Combined, 0.50),6])
+EurOR[8]<-mean(Eur[Eur$Combined > quantile(Eur$Combined, 0.80),6])/mean(Eur[Eur$Combined < quantile(Eur$Combined, 0.80),6])
+EurOR[9]<-mean(Eur[Eur$Combined > quantile(Eur$Combined, 0.90),6])/mean(Eur[Eur$Combined < quantile(Eur$Combined, 0.90),6])
+EurOR[10]<-mean(Eur[Eur$Combined > quantile(Eur$Combined, 0.95),6])/mean(Eur[Eur$Combined < quantile(Eur$Combined, 0.95),6])
+
+AJOR<-NULL
+AJOR[1]<-mean(AJ[AJ$LiuEval < quantile(AJ$LiuEval, 0.50),6])/mean(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.50),6])
+AJOR[2]<-mean(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.50),6])/mean(AJ[AJ$LiuEval < quantile(AJ$LiuEval, 0.50),6])
+AJOR[3]<-mean(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.80),6])/mean(AJ[AJ$LiuEval < quantile(AJ$LiuEval, 0.80),6])
+AJOR[4]<-mean(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.90),6])/mean(AJ[AJ$LiuEval < quantile(AJ$LiuEval, 0.90),6])
+AJOR[5]<-mean(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.95),6])/mean(AJ[AJ$LiuEval < quantile(AJ$LiuEval, 0.95),6])
+AJOR[6]<-mean(AJ[AJ$Combined < quantile(AJ$Combined, 0.50),6])/mean(AJ[AJ$Combined > quantile(AJ$Combined, 0.50),6])
+AJOR[7]<-mean(AJ[AJ$Combined > quantile(AJ$Combined, 0.50),6])/mean(AJ[AJ$Combined < quantile(AJ$Combined, 0.50),6])
+AJOR[8]<-mean(AJ[AJ$Combined > quantile(AJ$Combined, 0.80),6])/mean(AJ[AJ$Combined < quantile(AJ$Combined, 0.80),6])
+AJOR[9]<-mean(AJ[AJ$Combined > quantile(AJ$Combined, 0.90),6])/mean(AJ[AJ$Combined < quantile(AJ$Combined, 0.90),6])
+AJOR[10]<-mean(AJ[AJ$Combined > quantile(AJ$Combined, 0.95),6])/mean(AJ[AJ$Combined < quantile(AJ$Combined, 0.95),6])
+
+HisOR<-NULL
+HisOR[1]<-mean(His[His$LiuEval < quantile(His$LiuEval, 0.50),6])/mean(His[His$LiuEval > quantile(His$LiuEval, 0.50),6])
+HisOR[2]<-mean(His[His$LiuEval > quantile(His$LiuEval, 0.50),6])/mean(His[His$LiuEval < quantile(His$LiuEval, 0.50),6])
+HisOR[3]<-mean(His[His$LiuEval > quantile(His$LiuEval, 0.80),6])/mean(His[His$LiuEval < quantile(His$LiuEval, 0.80),6])
+HisOR[4]<-mean(His[His$LiuEval > quantile(His$LiuEval, 0.90),6])/mean(His[His$LiuEval < quantile(His$LiuEval, 0.90),6])
+HisOR[5]<-mean(His[His$LiuEval > quantile(His$LiuEval, 0.95),6])/mean(His[His$LiuEval < quantile(His$LiuEval, 0.95),6])
+HisOR[6]<-mean(His[His$Combined < quantile(His$Combined, 0.50),6])/mean(His[His$Combined > quantile(His$Combined, 0.50),6])
+HisOR[7]<-mean(His[His$Combined > quantile(His$Combined, 0.50),6])/mean(His[His$Combined < quantile(His$Combined, 0.50),6])
+HisOR[8]<-mean(His[His$Combined > quantile(His$Combined, 0.80),6])/mean(His[His$Combined < quantile(His$Combined, 0.80),6])
+HisOR[9]<-mean(His[His$Combined > quantile(His$Combined, 0.90),6])/mean(His[His$Combined < quantile(His$Combined, 0.90),6])
+HisOR[10]<-mean(His[His$Combined > quantile(His$Combined, 0.95),6])/mean(His[His$Combined < quantile(His$Combined, 0.95),6])
+
+AAOR<-NULL
+AAOR[1]<-mean(AA[AA$LiuEval < quantile(AA$LiuEval, 0.50),6])/mean(AA[AA$LiuEval > quantile(AA$LiuEval, 0.50),6])
+AAOR[2]<-mean(AA[AA$LiuEval > quantile(AA$LiuEval, 0.50),6])/mean(AA[AA$LiuEval < quantile(AA$LiuEval, 0.50),6])
+AAOR[3]<-mean(AA[AA$LiuEval > quantile(AA$LiuEval, 0.80),6])/mean(AA[AA$LiuEval < quantile(AA$LiuEval, 0.80),6])
+AAOR[4]<-mean(AA[AA$LiuEval > quantile(AA$LiuEval, 0.90),6])/mean(AA[AA$LiuEval < quantile(AA$LiuEval, 0.90),6])
+AAOR[5]<-mean(AA[AA$LiuEval > quantile(AA$LiuEval, 0.95),6])/mean(AA[AA$LiuEval < quantile(AA$LiuEval, 0.95),6])
+AAOR[6]<-mean(AA[AA$Combined < quantile(AA$Combined, 0.50),6])/mean(AA[AA$Combined > quantile(AA$Combined, 0.50),6])
+AAOR[7]<-mean(AA[AA$Combined > quantile(AA$Combined, 0.50),6])/mean(AA[AA$Combined < quantile(AA$Combined, 0.50),6])
+AAOR[8]<-mean(AA[AA$Combined > quantile(AA$Combined, 0.80),6])/mean(AA[AA$Combined < quantile(AA$Combined, 0.80),6])
+AAOR[9]<-mean(AA[AA$Combined > quantile(AA$Combined, 0.90),6])/mean(AA[AA$Combined < quantile(AA$Combined, 0.90),6])
+AAOR[10]<-mean(AA[AA$Combined > quantile(AA$Combined, 0.95),6])/mean(AA[AA$Combined < quantile(AA$Combined, 0.95),6])
+
+ORtable<-matrix(c(EurOR,AJOR,AAOR,HisOR),
+	nrow=5,
+	ncol=8)
+ORtable<-t(ORtable)
+colnames(ORtable)<-c("Lower 50%","Top 50%","Top 20%","Top 10%","Top 5%")
+rownames(ORtable)<-c("European Liu","Eur Combined","AJ Hui","AJ Combined","AA Brant","AA Combined","His Liu","His Combined")
+
+#Calculate total # of cases in top %
+EurCases<-NULL
+EurCases[1]<-sum(Eur[Eur$LiuEval < quantile(Eur$LiuEval, 0.50),6])
+EurCases[2]<-sum(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.50),6])
+EurCases[3]<-sum(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.80),6])
+EurCases[4]<-sum(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.90),6])
+EurCases[5]<-sum(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.95),6])
+EurCases[6]<-sum(Eur[Eur$Combined < quantile(Eur$Combined, 0.50),6])
+EurCases[7]<-sum(Eur[Eur$Combined > quantile(Eur$Combined, 0.50),6])
+EurCases[8]<-sum(Eur[Eur$Combined > quantile(Eur$Combined, 0.80),6])
+EurCases[9]<-sum(Eur[Eur$Combined > quantile(Eur$Combined, 0.90),6])
+EurCases[10]<-sum(Eur[Eur$Combined > quantile(Eur$Combined, 0.95),6])
+
+AJCases<-NULL
+AJCases[1]<-sum(AJ[AJ$LiuEval < quantile(AJ$LiuEval, 0.50),6])
+AJCases[2]<-sum(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.50),6])
+AJCases[3]<-sum(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.80),6])
+AJCases[4]<-sum(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.90),6])
+AJCases[5]<-sum(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.95),6])
+AJCases[6]<-sum(AJ[AJ$Combined < quantile(AJ$Combined, 0.50),6])
+AJCases[7]<-sum(AJ[AJ$Combined > quantile(AJ$Combined, 0.50),6])
+AJCases[8]<-sum(AJ[AJ$Combined > quantile(AJ$Combined, 0.80),6])
+AJCases[9]<-sum(AJ[AJ$Combined > quantile(AJ$Combined, 0.90),6])
+AJCases[10]<-sum(AJ[AJ$Combined > quantile(AJ$Combined, 0.95),6])
+
+HisCases<-NULL
+HisCases[1]<-sum(His[His$LiuEval < quantile(His$LiuEval, 0.50),6])
+HisCases[2]<-sum(His[His$LiuEval > quantile(His$LiuEval, 0.50),6])
+HisCases[3]<-sum(His[His$LiuEval > quantile(His$LiuEval, 0.80),6])
+HisCases[4]<-sum(His[His$LiuEval > quantile(His$LiuEval, 0.90),6])
+HisCases[5]<-sum(His[His$LiuEval > quantile(His$LiuEval, 0.95),6])
+HisCases[6]<-sum(His[His$Combined < quantile(His$Combined, 0.50),6])
+HisCases[7]<-sum(His[His$Combined > quantile(His$Combined, 0.50),6])
+HisCases[8]<-sum(His[His$Combined > quantile(His$Combined, 0.80),6])
+HisCases[9]<-sum(His[His$Combined > quantile(His$Combined, 0.90),6])
+HisCases[10]<-sum(His[His$Combined > quantile(His$Combined, 0.95),6])
+
+AACases<-NULL
+AACases[1]<-sum(AA[AA$LiuEval < quantile(AA$LiuEval, 0.50),6])
+AACases[2]<-sum(AA[AA$LiuEval > quantile(AA$LiuEval, 0.50),6])
+AACases[3]<-sum(AA[AA$LiuEval > quantile(AA$LiuEval, 0.80),6])
+AACases[4]<-sum(AA[AA$LiuEval > quantile(AA$LiuEval, 0.90),6])
+AACases[5]<-sum(AA[AA$LiuEval > quantile(AA$LiuEval, 0.95),6])
+AACases[6]<-sum(AA[AA$Combined < quantile(AA$Combined, 0.50),6])
+AACases[7]<-sum(AA[AA$Combined > quantile(AA$Combined, 0.50),6])
+AACases[8]<-sum(AA[AA$Combined > quantile(AA$Combined, 0.80),6])
+AACases[9]<-sum(AA[AA$Combined > quantile(AA$Combined, 0.90),6])
+AACases[10]<-sum(AA[AA$Combined > quantile(AA$Combined, 0.95),6])
+
+Casestable<-matrix(c(EurCases,AJCases,AACases,HisCases),
+	nrow=5,
+	ncol=8)
+Casestable<-t(Casestable)
+colnames(Casestable)<-c("Lower 50%","Top 50%","Top 20%","Top 10%","Top 5%")
+rownames(Casestable)<-c("European Liu","Eur Combined","AJ Hui","AJ Combined","AA Brant","AA Combined","His Liu","His Combined")
+
+#Store IBD fraction based on lower 50%, top 50%, 20%, 10%, 5% vs. remaining
+EurFraction<-NULL
+EurFraction[1]<-mean(Eur[Eur$LiuEval < quantile(Eur$LiuEval, 0.50),6])
+EurFraction[2]<-mean(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.50),6])
+EurFraction[3]<-mean(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.80),6])
+EurFraction[4]<-mean(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.90),6])
+EurFraction[5]<-mean(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.95),6])
+EurFraction[6]<-mean(Eur[Eur$Combined < quantile(Eur$Combined, 0.50),6])
+EurFraction[7]<-mean(Eur[Eur$Combined > quantile(Eur$Combined, 0.50),6])
+EurFraction[8]<-mean(Eur[Eur$Combined > quantile(Eur$Combined, 0.80),6])
+EurFraction[9]<-mean(Eur[Eur$Combined > quantile(Eur$Combined, 0.90),6])
+EurFraction[10]<-mean(Eur[Eur$Combined > quantile(Eur$Combined, 0.95),6])
+
+AJFraction<-NULL
+AJFraction[1]<-mean(AJ[AJ$LiuEval < quantile(AJ$LiuEval, 0.50),6])
+AJFraction[2]<-mean(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.50),6])
+AJFraction[3]<-mean(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.80),6])
+AJFraction[4]<-mean(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.90),6])
+AJFraction[5]<-mean(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.95),6])
+AJFraction[6]<-mean(AJ[AJ$Combined < quantile(AJ$Combined, 0.50),6])
+AJFraction[7]<-mean(AJ[AJ$Combined > quantile(AJ$Combined, 0.50),6])
+AJFraction[8]<-mean(AJ[AJ$Combined > quantile(AJ$Combined, 0.80),6])
+AJFraction[9]<-mean(AJ[AJ$Combined > quantile(AJ$Combined, 0.90),6])
+AJFraction[10]<-mean(AJ[AJ$Combined > quantile(AJ$Combined, 0.95),6])
+
+HisFraction<-NULL
+HisFraction[1]<-mean(His[His$LiuEval < quantile(His$LiuEval, 0.50),6])
+HisFraction[2]<-mean(His[His$LiuEval > quantile(His$LiuEval, 0.50),6])
+HisFraction[3]<-mean(His[His$LiuEval > quantile(His$LiuEval, 0.80),6])
+HisFraction[4]<-mean(His[His$LiuEval > quantile(His$LiuEval, 0.90),6])
+HisFraction[5]<-mean(His[His$LiuEval > quantile(His$LiuEval, 0.95),6])
+HisFraction[6]<-mean(His[His$Combined < quantile(His$Combined, 0.50),6])
+HisFraction[7]<-mean(His[His$Combined > quantile(His$Combined, 0.50),6])
+HisFraction[8]<-mean(His[His$Combined > quantile(His$Combined, 0.80),6])
+HisFraction[9]<-mean(His[His$Combined > quantile(His$Combined, 0.90),6])
+HisFraction[10]<-mean(His[His$Combined > quantile(His$Combined, 0.95),6])
+
+AAFraction<-NULL
+AAFraction[1]<-mean(AA[AA$LiuEval < quantile(AA$LiuEval, 0.50),6])
+AAFraction[2]<-mean(AA[AA$LiuEval > quantile(AA$LiuEval, 0.50),6])
+AAFraction[3]<-mean(AA[AA$LiuEval > quantile(AA$LiuEval, 0.80),6])
+AAFraction[4]<-mean(AA[AA$LiuEval > quantile(AA$LiuEval, 0.90),6])
+AAFraction[5]<-mean(AA[AA$LiuEval > quantile(AA$LiuEval, 0.95),6])
+AAFraction[6]<-mean(AA[AA$Combined < quantile(AA$Combined, 0.50),6])
+AAFraction[7]<-mean(AA[AA$Combined > quantile(AA$Combined, 0.50),6])
+AAFraction[8]<-mean(AA[AA$Combined > quantile(AA$Combined, 0.80),6])
+AAFraction[9]<-mean(AA[AA$Combined > quantile(AA$Combined, 0.90),6])
+AAFraction[10]<-mean(AA[AA$Combined > quantile(AA$Combined, 0.95),6])
+
+Fractiontable<-matrix(c(EurFraction,AJFraction,AAFraction,HisFraction),
+	nrow=5,
+	ncol=8)
+Fractiontable<-t(Fractiontable)
+colnames(Fractiontable)<-c("Lower 50%","Top 50%","Top 20%","Top 10%","Top 5%")
+rownames(Fractiontable)<-c("European Liu","Eur Combined","AJ Hui","AJ Combined","AA Brant","AA Combined","His Liu","His Combined")
+
+FractiontablePlot<-t(Fractiontable)
+library(reshape2)
+library(ggplot2)
+dfFraction <- melt(FractiontablePlot)
+dfFraction$rowid <- row.names(FractiontablePlot)
+ggplot(dfFraction, aes(Var1, value, group=factor(Var2))) + geom_line(aes(color=factor(Var2)),size=1) + theme_minimal() + scale_colour_brewer(palette="Paired")
+
+
+#Store ORs based on lower 50%, top 50%, 20%, 10%, 5% vs. full population
+EurOR<-NULL
+EurOR[1]<-mean(Eur[Eur$LiuEval < quantile(Eur$LiuEval, 0.50),6])/mean(Eur[,6])
+EurOR[2]<-mean(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.50),6])/mean(Eur[,6])
+EurOR[3]<-mean(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.80),6])/mean(Eur[,6])
+EurOR[4]<-mean(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.90),6])/mean(Eur[,6])
+EurOR[5]<-mean(Eur[Eur$LiuEval > quantile(Eur$LiuEval, 0.95),6])/mean(Eur[,6])
+EurOR[6]<-mean(Eur[Eur$Combined < quantile(Eur$Combined, 0.50),6])/mean(Eur[,6])
+EurOR[7]<-mean(Eur[Eur$Combined > quantile(Eur$Combined, 0.50),6])/mean(Eur[,6])
+EurOR[8]<-mean(Eur[Eur$Combined > quantile(Eur$Combined, 0.80),6])/mean(Eur[,6])
+EurOR[9]<-mean(Eur[Eur$Combined > quantile(Eur$Combined, 0.90),6])/mean(Eur[,6])
+EurOR[10]<-mean(Eur[Eur$Combined > quantile(Eur$Combined, 0.95),6])/mean(Eur[,6])
+
+AJOR<-NULL
+AJOR[1]<-mean(AJ[AJ$LiuEval < quantile(AJ$LiuEval, 0.50),6])/mean(AJ[,6])
+AJOR[2]<-mean(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.50),6])/mean(AJ[,6])
+AJOR[3]<-mean(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.80),6])/mean(AJ[,6])
+AJOR[4]<-mean(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.90),6])/mean(AJ[,6])
+AJOR[5]<-mean(AJ[AJ$LiuEval > quantile(AJ$LiuEval, 0.95),6])/mean(AJ[,6])
+AJOR[6]<-mean(AJ[AJ$Combined < quantile(AJ$Combined, 0.50),6])/mean(AJ[,6])
+AJOR[7]<-mean(AJ[AJ$Combined > quantile(AJ$Combined, 0.50),6])/mean(AJ[,6])
+AJOR[8]<-mean(AJ[AJ$Combined > quantile(AJ$Combined, 0.80),6])/mean(AJ[,6])
+AJOR[9]<-mean(AJ[AJ$Combined > quantile(AJ$Combined, 0.90),6])/mean(AJ[,6])
+AJOR[10]<-mean(AJ[AJ$Combined > quantile(AJ$Combined, 0.95),6])/mean(AJ[,6])
+
+
+HisOR<-NULL
+HisOR[1]<-mean(His[His$LiuEval < quantile(His$LiuEval, 0.50),6])/mean(His[,6])
+HisOR[2]<-mean(His[His$LiuEval > quantile(His$LiuEval, 0.50),6])/mean(His[,6])
+HisOR[3]<-mean(His[His$LiuEval > quantile(His$LiuEval, 0.80),6])/mean(His[,6])
+HisOR[4]<-mean(His[His$LiuEval > quantile(His$LiuEval, 0.90),6])/mean(His[,6])
+HisOR[5]<-mean(His[His$LiuEval > quantile(His$LiuEval, 0.95),6])/mean(His[,6])
+HisOR[6]<-mean(His[His$Combined < quantile(His$Combined, 0.50),6])/mean(His[,6])
+HisOR[7]<-mean(His[His$Combined > quantile(His$Combined, 0.50),6])/mean(His[,6])
+HisOR[8]<-mean(His[His$Combined > quantile(His$Combined, 0.80),6])/mean(His[,6])
+HisOR[9]<-mean(His[His$Combined > quantile(His$Combined, 0.90),6])/mean(His[,6])
+HisOR[10]<-mean(His[His$Combined > quantile(His$Combined, 0.95),6])/mean(His[,6])
+
+AAOR<-NULL
+AAOR[1]<-mean(AA[AA$LiuEval < quantile(AA$LiuEval, 0.50),6])/mean(AA[,6])
+AAOR[2]<-mean(AA[AA$LiuEval > quantile(AA$LiuEval, 0.50),6])/mean(AA[,6])
+AAOR[3]<-mean(AA[AA$LiuEval > quantile(AA$LiuEval, 0.80),6])/mean(AA[,6])
+AAOR[4]<-mean(AA[AA$LiuEval > quantile(AA$LiuEval, 0.90),6])/mean(AA[,6])
+AAOR[5]<-mean(AA[AA$LiuEval > quantile(AA$LiuEval, 0.95),6])/mean(AA[,6])
+AAOR[6]<-mean(AA[AA$Combined < quantile(AA$Combined, 0.50),6])/mean(AA[,6])
+AAOR[7]<-mean(AA[AA$Combined > quantile(AA$Combined, 0.50),6])/mean(AA[,6])
+AAOR[8]<-mean(AA[AA$Combined > quantile(AA$Combined, 0.80),6])/mean(AA[,6])
+AAOR[9]<-mean(AA[AA$Combined > quantile(AA$Combined, 0.90),6])/mean(AA[,6])
+AAOR[10]<-mean(AA[AA$Combined > quantile(AA$Combined, 0.95),6])/mean(AA[,6])
+
+ORtable<-matrix(c(EurOR,AJOR,AAOR,HisOR),
+	nrow=5,
+	ncol=8)
+ORtable<-t(ORtable)
+colnames(ORtable)<-c("Lower 50%","Top 50%","Top 20%","Top 10%","Top 5%")
+rownames(ORtable)<-c("European Liu","Eur Combined","AJ Hui","AJ Combined","AA Brant","AA Combined","His Liu","His Combined")
+
+ORtablePlot<-t(ORtable)
+library(reshape2)
+library(ggplot2)
+dfOR <- melt(ORtablePlot)
+dfOR$rowid <- row.names(ORtablePlot)
+ggplot(dfOR, aes(Var1, value, group=factor(Var2))) + geom_line(aes(color=factor(Var2)),size=1)
+
+
+###Plot only risk score AUCs without top SNPs
+library(reshape2)
+library(ggplot2)
+AllAUC<-read.csv("C:/Users/Cyyr/Desktop/LabFiles/Regeneron/RiskScores/AllAUC.csv",header=T,row.names=1)
+
+rows<-c(1,3,5,7,9,11,13,15)
+AllAUCnoSNP<-as.matrix(AllAUC[rows,])
+colnames(AllAUCnoSNP)<-c("European AUC","Hispanic AUC","AA AUC","AJ AUC")
+rownames(AllAUCnoSNP)<-c("Pheno","Liu","Brant","Hui","Meta","LiuHui","LiuBrant","AllCombined")
+
+dfAUC <- melt(AllAUCnoSNP)
+dfAUC$rowid <- row.names(AllAUCnoSNP)
+ggplot(dfAUC, aes(Var1, value, group=factor(Var2))) + geom_line(aes(color=factor(Var2)),size=1)
+
+
+###logistic regression (case/control risk scores) - based on adjusted partial r2 rather than p values
+#Liu et al association data
+library(rsq)
+dat <- read.csv("C:/Users/Cyyr/Desktop/LabFiles/Regeneron/RiskScores/CombinedScorePlotImpNoAmbig.csv",header=T)
+Eur<-dat[dat$RACE_OMRI=="EUR",]
+AJ<-dat[dat$RACE_OMRI=="AJ",]
+AA<-dat[dat$RACE_OMRI=="AA",]
+His<-dat[dat$RACE_OMRI=="HIS",]
+EurResultsLiu<-NA
+AJresultsLiu<-NA
+AAresultsLiu<-NA
+HisResultsLiu<-NA
+baseEur<-glm(formula = Eur$IBD ~ Eur$GENDER + Eur$AGE,family="binomial")
+baseAJ<-glm(formula = AJ$IBD ~ AJ$GENDER + AJ$AGE,family="binomial")
+baseAA<-glm(formula = AA$IBD ~ AA$GENDER + AA$AGE,family="binomial")
+baseHis<-glm(formula = His$IBD ~ His$GENDER + His$AGE,family="binomial")
+
+for (x in 12:36){
+test<-glm(formula = Eur$IBD ~ Eur[,x] + Eur$GENDER + Eur$AGE,family="binomial")
+EurResultsLiu[x-11]<-rsq.partial(test,baseEur,adj=TRUE)[4]
+}
+for (x in 12:36){
+test<-glm(formula = AJ$IBD ~ AJ[,x] + AJ$GENDER + AJ$AGE,family="binomial")
+AJresultsLiu[x-11]<-rsq.partial(test,baseAJ,adj=TRUE)[4]
+}
+for (x in 12:36){
+test<-glm(formula = AA$IBD ~ AA[,x] + AA$GENDER + AA$AGE,family="binomial")
+AAresultsLiu[x-11]<-rsq.partial(test,baseAA,adj=TRUE)[4]
+}
+for (x in 12:36){
+test<-glm(formula = His$IBD ~ His[,x] + His$GENDER + His$AGE,family="binomial")
+HisResultsLiu[x-11]<-rsq.partial(test,baseHis,adj=TRUE)[4]
+}
+
+#Brant et al association data
+EurResultsBrant<-NA
+AJresultsBrant<-NA
+AAresultsBrant<-NA
+HisResultsBrant<-NA
+for (x in 37:61){
+test<-glm(formula = Eur$IBD ~ Eur[,x] + Eur$GENDER + Eur$AGE,family="binomial")
+EurResultsBrant[x-36]<-rsq.partial(test,baseEur,adj=TRUE)[4]
+}
+for (x in 37:61){
+test<-glm(formula = AJ$IBD ~ AJ[,x] + AJ$GENDER + AJ$AGE,family="binomial")
+AJresultsBrant[x-36]<-rsq.partial(test,baseAJ,adj=TRUE)[4]
+}
+for (x in 37:61){
+test<-glm(formula = AA$IBD ~ AA[,x] + AA$GENDER + AA$AGE,family="binomial")
+AAresultsBrant[x-36]<-rsq.partial(test,baseAA,adj=TRUE)[4]
+}
+for (x in 37:61){
+test<-glm(formula = His$IBD ~ His[,x] + His$GENDER + His$AGE,family="binomial")
+HisResultsBrant[x-36]<-rsq.partial(test,baseHis,adj=TRUE)[4]
+}
+
+
+#Hui AJ association data
+EurResultsHui<-NA
+AJresultsHui<-NA
+AAresultsHui<-NA
+HisResultsHui<-NA
+for (x in 62:86){
+test<-glm(formula = Eur$IBD ~ Eur[,x] + Eur$GENDER + Eur$AGE,family="binomial")
+EurResultsHui[x-61]<-rsq.partial(test,baseEur,adj=TRUE)[4]
+}
+for (x in 62:86){
+test<-glm(formula = AJ$IBD ~ AJ[,x] + AJ$GENDER + AJ$AGE,family="binomial")
+AJresultsHui[x-61]<-rsq.partial(test,baseAJ,adj=TRUE)[4]
+}
+for (x in 62:86){
+test<-glm(formula = AA$IBD ~ AA[,x] + AA$GENDER + AA$AGE,family="binomial")
+AAresultsHui[x-61]<-rsq.partial(test,baseAA,adj=TRUE)[4]
+}
+for (x in 62:86){
+test<-glm(formula = His$IBD ~ His[,x] + His$GENDER + His$AGE,family="binomial")
+HisResultsHui[x-61]<-rsq.partial(test,baseHis,adj=TRUE)[4]
+}
+
+#Meta GWAS association data
+EurResultsMeta<-NA
+AJresultsMeta<-NA
+AAresultsMeta<-NA
+HisResultsMeta<-NA
+for (x in 87:111){
+test<-glm(formula = Eur$IBD ~ Eur[,x] + Eur$GENDER + Eur$AGE,family="binomial")
+EurResultsMeta[x-86]<-rsq.partial(test,baseEur,adj=TRUE)[4]
+}
+for (x in 87:111){
+test<-glm(formula = AJ$IBD ~ AJ[,x] + AJ$GENDER + AJ$AGE,family="binomial")
+AJresultsMeta[x-86]<-rsq.partial(test,baseAJ,adj=TRUE)[4]
+}
+for (x in 87:111){
+test<-glm(formula = AA$IBD ~ AA[,x] + AA$GENDER + AA$AGE,family="binomial")
+AAresultsMeta[x-86]<-rsq.partial(test,baseAA,adj=TRUE)[4]
+}
+for (x in 87:111){
+test<-glm(formula = His$IBD ~ His[,x] + His$GENDER + His$AGE,family="binomial")
+HisResultsMeta[x-86]<-rsq.partial(test,baseHis,adj=TRUE)[4]
+}
+
+
+#Generate heat plot for risk score regression p-values
+AllResults<-matrix(
+	c(EurResultsLiu,AJresultsLiu,HisResultsLiu,AAresultsLiu,EurResultsBrant,AJresultsBrant,HisResultsBrant,AAresultsBrant,EurResultsHui,AJresultsHui,HisResultsHui,AAresultsHui,EurResultsMeta,AJresultsMeta,HisResultsMeta,AAresultsMeta),
+	nrow=25,
+	ncol=16)
+colnames(AllResults)<-c("LiuEuropean","LiuAJ","LiuHispanic","LiuAA","BrantEuropean","BrantAJ","BrantHispanic","BrantAA","HuiEuropean","HuiAJ","HuiHispanic","HuiAA","MetaEuropean","MetaAJ","MetaHispanic","MetaAA")
+rownames(AllResults)<-c("02","04","06","08","12","14","16","18","22","24","26","28","42","44","46","48","62","64","66","68","82","84","86","88","PRSice2")
+#write AllResults as table
+#write.csv(AllResults,"C:/Users/Cyyr/Desktop/LabFiles/Regeneron/RiskScores/ImpRegResults.csv",quote=F)
+
+library(gplots)
+coln<-ncol(AllResults)
+rown<-nrow(AllResults)
+AllResults <- mapply(AllResults, FUN=as.numeric)
+AllResults <- matrix(data=AllResults, ncol=coln, nrow=rown)
+heatmap.2(AllResults,
+           col = colorpanel(100,"green","white","red"),
+           margins = c(12, 22),
+           trace = "none", 
+           xlab = "Biobank Population",
+           lhei = c(2, 8),
+           scale = c("none"),
+           symbreaks = min(dat2, na.rm=TRUE),
+		   key.title = NA,
+           na.color="grey80",
+           cexRow = 0.5, cexCol = 0.7,
+           main = "IBD prediction (-log10(p-val))", 
+           dendrogram = "none", 
+           Colv = FALSE ,
+		   Rowv= FALSE)
+
+
+###test for significance of AUC differences
+library(DAAG)
+library(pROC)
+library(boot)
+
+dat <- read.csv("C:/Users/Cyyr/Desktop/LabFiles/Regeneron/RiskScores/CombinedScorePlotImpNoAmbig.csv",header=T)
+dat<-na.omit(dat)
+Eur<-dat[dat$RACE_OMRI=="EUR"&!is.na(dat$LRRK2at40740686)&dat$GENDER!="Unknown",]
+AJ<-dat[dat$RACE_OMRI=="AJ"&!is.na(dat$LRRK2at40740686)&dat$GENDER!="Unknown",]
+AA<-dat[dat$RACE_OMRI=="AA"&!is.na(dat$LRRK2at40740686)&dat$GENDER!="Unknown",]
+His<-dat[dat$RACE_OMRI=="HIS"&!is.na(dat$LRRK2at40740686)&dat$GENDER!="Unknown",]
+
+EurPheno<-glm(data = Eur, formula = IBD ~ GENDER + AGE,family="binomial")
+EurPhenoAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE,family="binomial")))
+
+EurGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurGenoAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+EurLiu<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82,family="binomial")
+EurLiuAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82),family="binomial"))
+
+EurLiuGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurLiuGenoAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+EurBrant<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Brant08,family="binomial")
+EurBrantAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Brant08,family="binomial")))
+
+EurBrantGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Brant08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurBrantGenoAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Brant08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+EurHui<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Hui08,family="binomial")
+EurHuiAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Hui08,family="binomial")))
+
+EurHuiGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurHuiGenoAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+EurMeta<-glm(data = Eur, formula = IBD ~ GENDER + AGE + MetaPRSice,family="binomial")
+EurMetaAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + MetaPRSice,family="binomial")))
+
+EurMetaGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + MetaPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurMetaGenoAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + MetaPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+EurLiuHui<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08,family="binomial")
+EurLiuHuiAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08,family="binomial")))
+
+EurLiuHuiGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurLiuHuiGenoAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+EurLiuBrant<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Brant08,family="binomial")
+EurLiuBrantAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Brant08,family="binomial")))
+
+EurLiuBrantGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Brant08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurLiuBrantGenoAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Brant08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+EurCombined<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant08,family="binomial")
+EurCombinedAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant08,family="binomial")))
+
+EurCombinedGeno<-glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+EurCombinedGenoAUC<-roc(Eur$IBD, predict(glm(data = Eur, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+HisPheno<-glm(data = His, formula = IBD ~ GENDER + AGE,family="binomial")
+HisPhenoAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE,family="binomial")))
+
+HisGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisGenoAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+HisLiu<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice,family="binomial")
+HisLiuAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice,family="binomial")))
+
+HisLiuGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisLiuGenoAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+HisBrant<-glm(data = His, formula = IBD ~ GENDER + AGE + Brant48,family="binomial")
+HisBrantAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + Brant48,family="binomial")))
+
+HisBrantGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisBrantGenoAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+HisHui<-glm(data = His, formula = IBD ~ GENDER + AGE + Hui48,family="binomial")
+HisHuiAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + Hui48,family="binomial")))
+
+HisHuiGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + Hui48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisHuiGenoAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + Hui48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+HisMeta<-glm(data = His, formula = IBD ~ GENDER + AGE + Meta82,family="binomial")
+HisMetaAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + Meta82,family="binomial")))
+
+HisMetaGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + Meta82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisMetaGenoAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + Meta82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+HisLiuHui<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48,family="binomial")
+HisLiuHuiAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48,family="binomial")))
+
+HisLiuHuiGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisLiuHuiGenoAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+HisLiuBrant<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Brant48,family="binomial")
+HisLiuBrantAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Brant48,family="binomial")))
+
+HisLiuBrantGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisLiuBrantGenoAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+HisCombined<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48 + Brant48,family="binomial")
+HisCombinedAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48 + Brant48,family="binomial")))
+
+HisCombinedGeno<-glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48 + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+HisCombinedGenoAUC<-roc(His$IBD, predict(glm(data = His, formula = IBD ~ GENDER + AGE + LiuPRSice + Hui48 + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AAPheno<-glm(data = AA, formula = IBD ~ GENDER + AGE,family="binomial")
+AAPhenoAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE,family="binomial")))
+
+AAGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AAGenoAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AALiu<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28,family="binomial")
+AALiuAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28,family="binomial")))
+
+AALiuGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AALiuGenoAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AABrant<-glm(data = AA, formula = IBD ~ GENDER + AGE + BrantPRSice,family="binomial")
+AABrantAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + BrantPRSice,family="binomial")))
+
+AABrantGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + BrantPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AABrantGenoAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + BrantPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AAHui<-glm(data = AA, formula = IBD ~ GENDER + AGE + Hui28,family="binomial")
+AAHuiAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Hui28,family="binomial")))
+
+AAHuiGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + Hui28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AAHuiGenoAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Hui28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AAMeta<-glm(data = AA, formula = IBD ~ GENDER + AGE + Meta28,family="binomial")
+AAMetaAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Meta28,family="binomial")))
+
+AAMetaGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + Meta28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AAMetaGenoAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Meta28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AALiuHui<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28,family="binomial")
+AALiuHuiAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28,family="binomial")))
+
+AALiuHuiGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AALiuHuiGenoAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AALiuBrant<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + BrantPRSice,family="binomial")
+AALiuBrantAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + BrantPRSice,family="binomial")))
+
+AALiuBrantGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + BrantPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AALiuBrantGenoAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + BrantPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AACombined<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28 + BrantPRSice,family="binomial")
+AACombinedAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28 + BrantPRSice,family="binomial")))
+
+AACombinedGeno<-glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28 + BrantPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AACombinedGenoAUC<-roc(AA$IBD, predict(glm(data = AA, formula = IBD ~ GENDER + AGE + Liu28 + Hui28 + BrantPRSice + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AJPheno<-glm(data = AJ, formula = IBD ~ GENDER + AGE,family="binomial")
+AJPhenoAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE,family="binomial")))
+
+AJGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJGenoAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AJLiu<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82,family="binomial")
+AJLiuAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82,family="binomial")))
+
+AJLiuGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJLiuGenoAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AJBrant<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Brant48,family="binomial")
+AJBrantAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Brant48,family="binomial")))
+
+AJBrantGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJBrantGenoAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AJHui<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Hui08,family="binomial")
+AJHuiAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Hui08,family="binomial")))
+
+AJHuiGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJHuiGenoAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AJMeta<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Meta82,family="binomial")
+AJMetaAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Meta82,family="binomial")))
+
+AJMetaGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Meta82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJMetaGenoAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Meta82 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AJLiuHui<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08,family="binomial")
+AJLiuHuiAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08,family="binomial")))
+
+AJLiuHuiGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJLiuHuiGenoAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AJLiuBrant<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Brant48,family="binomial")
+AJLiuBrantAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Brant48,family="binomial")))
+
+AJLiuBrantGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJLiuBrantGenoAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+AJCombined<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant48,family="binomial")
+AJCombinedAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant48,family="binomial")))
+
+AJCombinedGeno<-glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")
+AJCombinedGenoAUC<-roc(AJ$IBD, predict(glm(data = AJ, formula = IBD ~ GENDER + AGE + Liu82 + Hui08 + Brant48 + IL23Rat67705958 + LRRK2at40702911 + LRRK2at40740686 + NOD2at50745926 + NOD2at50756540 + NOD2at50763781,family="binomial")))
+
+##compare AUC curves (Eur = 0.06619, AA = 0.1983, His = 0.01252, AJ = 0.003265)
+EurTest<-roc.test(EurLiuAUC, EurMetaGenoAUC, reuse.auc=TRUE,na.rm=TRUE, boot.stratified=TRUE,paired=TRUE)
+AATest<-roc.test(AABrantAUC, AACombinedGenoAUC, reuse.auc=TRUE,na.rm=TRUE, boot.stratified=TRUE,paired=TRUE)
+AJTest<-roc.test(AJHuiAUC, AJMetaGenoAUC, reuse.auc=TRUE,na.rm=TRUE, boot.stratified=TRUE,paired=TRUE)
+HisTest<-roc.test(HisLiuAUC, HisMetaGenoAUC, reuse.auc=TRUE,na.rm=TRUE, boot.stratified=TRUE,paired=TRUE)
+AJTest<-roc.test(AJLiuAUC, AJMetaGenoAUC, reuse.auc=TRUE,na.rm=TRUE, boot.stratified=TRUE,paired=TRUE)
+#partial AUC comparison - same results
+EurTestPartial<-roc.test(EurLiuAUC, EurMetaGenoAUC, reuse.auc=TRUE,na.rm=TRUE,  partial.auc=c(1, 0.8), boot.stratified=TRUE,paired=TRUE)
+AATestPartial<-roc.test(AABrantAUC, AACombinedGenoAUC, reuse.auc=TRUE,na.rm=TRUE, partial.auc=c(1, 0.8), boot.stratified=TRUE,paired=TRUE)
+AJTestPartial<-roc.test(AJHuiAUC, AJMetaGenoAUC, reuse.auc=TRUE,na.rm=TRUE, partial.auc=c(1, 0.8), boot.stratified=TRUE,paired=TRUE)
+HisTestPartial<-roc.test(HisLiuAUC, HisMetaGenoAUC, reuse.auc=TRUE,na.rm=TRUE, partial.auc=c(1, 0.8), boot.stratified=TRUE,paired=TRUE)

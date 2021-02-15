@@ -1,0 +1,1454 @@
+#Working directory: /sc/private/regen/IPM-general/gettlk01
+###Rename SNPs to chromosome:position format, remove duplicate SNPs, change to RGN IDs, and extract populations
+../../plink --bfile /sc/private/regen/data/Regeneron/GSA/imputed_tgp_p3_plink/GSA_chr_all --update-ids IDswitch --maf 0.0001 --make-bed --out tempChrAll
+mv tempChrAll.bim origtempChrAll.bim
+awk -F " " '{print $1," ",$1,":",$4," ",$3," ",$4," ",$5," ",$6}' OFS="" "origtempChrAll.bim" > tempChrAll.bim
+awk -F " " '{print $2}' OFS="" "tempChrAll.bim" > tempSNPlist
+#sort tempSNPlist | uniq -d > tempDuplicatedSNPs
+sort tempSNPlist > tempSortedSNP
+uniq -d tempSortedSNP > tempDuplicatedSNPs
+#remove ambiguous/mismatched/duplicated alleles
+cat tempDuplicatedSNPs tempChrAll.remove > tempRemoveSNPs
+##Create plink files with ambiguous/duplicates removed
+../../plink --bfile tempChrAll --exclude tempRemoveSNPs --pheno AJlist --keep AJlist --maf 0.001 --make-bed --out GSAimputedHg19AJ
+../../plink --bfile tempChrAll --exclude tempRemoveSNPs --pheno Eurlist --keep Eurlist --maf 0.001 --make-bed --out GSAimputedHg19Eur
+../../plink --bfile tempChrAll --exclude tempRemoveSNPs --pheno AAlist --keep AAlist --maf 0.001 --make-bed --out GSAimputedHg19AA
+../../plink --bfile tempChrAll --exclude tempRemoveSNPs --pheno Hislist --keep Hislist --maf 0.001 --make-bed --out GSAimputedHg19His
+rm origtemp*
+rm temp*
+
+###run pruning/thresholding
+##Liu et al. Eur samples
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/02.clumped --score ../LiuEurAssoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/04.clumped --score ../LiuEurAssoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/06.clumped --score ../LiuEurAssoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/08.clumped --score ../LiuEurAssoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/12.clumped --score ../LiuEurAssoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/14.clumped --score ../LiuEurAssoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/16.clumped --score ../LiuEurAssoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/18.clumped --score ../LiuEurAssoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/22.clumped --score ../LiuEurAssoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/24.clumped --score ../LiuEurAssoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/26.clumped --score ../LiuEurAssoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/28.clumped --score ../LiuEurAssoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/42.clumped --score ../LiuEurAssoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/44.clumped --score ../LiuEurAssoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/46.clumped --score ../LiuEurAssoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/48.clumped --score ../LiuEurAssoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/62.clumped --score ../LiuEurAssoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/64.clumped --score ../LiuEurAssoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/66.clumped --score ../LiuEurAssoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/68.clumped --score ../LiuEurAssoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/82.clumped --score ../LiuEurAssoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/84.clumped --score ../LiuEurAssoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/86.clumped --score ../LiuEurAssoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/88.clumped --score ../LiuEurAssoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresLiuEur
+rm scores/temp*
+
+##Liu et al. AJ samples
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/02.clumped --score ../LiuEurAssoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/04.clumped --score ../LiuEurAssoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/06.clumped --score ../LiuEurAssoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/08.clumped --score ../LiuEurAssoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/12.clumped --score ../LiuEurAssoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/14.clumped --score ../LiuEurAssoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/16.clumped --score ../LiuEurAssoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/18.clumped --score ../LiuEurAssoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/22.clumped --score ../LiuEurAssoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/24.clumped --score ../LiuEurAssoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/26.clumped --score ../LiuEurAssoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/28.clumped --score ../LiuEurAssoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/42.clumped --score ../LiuEurAssoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/44.clumped --score ../LiuEurAssoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/46.clumped --score ../LiuEurAssoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/48.clumped --score ../LiuEurAssoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/62.clumped --score ../LiuEurAssoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/64.clumped --score ../LiuEurAssoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/66.clumped --score ../LiuEurAssoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/68.clumped --score ../LiuEurAssoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/82.clumped --score ../LiuEurAssoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/84.clumped --score ../LiuEurAssoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/86.clumped --score ../LiuEurAssoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/88.clumped --score ../LiuEurAssoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresLiuAJ
+rm scores/temp*
+
+##Liu et al. AA samples
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/02.clumped --score ../LiuEurAssoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/04.clumped --score ../LiuEurAssoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/06.clumped --score ../LiuEurAssoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/08.clumped --score ../LiuEurAssoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/12.clumped --score ../LiuEurAssoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/14.clumped --score ../LiuEurAssoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/16.clumped --score ../LiuEurAssoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/18.clumped --score ../LiuEurAssoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/22.clumped --score ../LiuEurAssoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/24.clumped --score ../LiuEurAssoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/26.clumped --score ../LiuEurAssoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/28.clumped --score ../LiuEurAssoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/42.clumped --score ../LiuEurAssoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/44.clumped --score ../LiuEurAssoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/46.clumped --score ../LiuEurAssoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/48.clumped --score ../LiuEurAssoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/62.clumped --score ../LiuEurAssoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/64.clumped --score ../LiuEurAssoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/66.clumped --score ../LiuEurAssoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/68.clumped --score ../LiuEurAssoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/82.clumped --score ../LiuEurAssoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/84.clumped --score ../LiuEurAssoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/86.clumped --score ../LiuEurAssoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/88.clumped --score ../LiuEurAssoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresLiuAA
+rm scores/temp*
+
+##Liu et al. Hispanic samples
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../LiuPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/02.clumped --score ../LiuEurAssoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/04.clumped --score ../LiuEurAssoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/06.clumped --score ../LiuEurAssoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/08.clumped --score ../LiuEurAssoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/12.clumped --score ../LiuEurAssoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/14.clumped --score ../LiuEurAssoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/16.clumped --score ../LiuEurAssoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/18.clumped --score ../LiuEurAssoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/22.clumped --score ../LiuEurAssoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/24.clumped --score ../LiuEurAssoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/26.clumped --score ../LiuEurAssoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/28.clumped --score ../LiuEurAssoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/42.clumped --score ../LiuEurAssoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/44.clumped --score ../LiuEurAssoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/46.clumped --score ../LiuEurAssoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/48.clumped --score ../LiuEurAssoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/62.clumped --score ../LiuEurAssoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/64.clumped --score ../LiuEurAssoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/66.clumped --score ../LiuEurAssoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/68.clumped --score ../LiuEurAssoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/82.clumped --score ../LiuEurAssoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/84.clumped --score ../LiuEurAssoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/86.clumped --score ../LiuEurAssoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/88.clumped --score ../LiuEurAssoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresLiuHis
+rm scores/temp*
+
+
+##Brant et al. Eur samples
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/02.clumped --score ../BrantAAassoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/04.clumped --score ../BrantAAassoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/06.clumped --score ../BrantAAassoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/08.clumped --score ../BrantAAassoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/12.clumped --score ../BrantAAassoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/14.clumped --score ../BrantAAassoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/16.clumped --score ../BrantAAassoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/18.clumped --score ../BrantAAassoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/22.clumped --score ../BrantAAassoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/24.clumped --score ../BrantAAassoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/26.clumped --score ../BrantAAassoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/28.clumped --score ../BrantAAassoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/42.clumped --score ../BrantAAassoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/44.clumped --score ../BrantAAassoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/46.clumped --score ../BrantAAassoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/48.clumped --score ../BrantAAassoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/62.clumped --score ../BrantAAassoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/64.clumped --score ../BrantAAassoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/66.clumped --score ../BrantAAassoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/68.clumped --score ../BrantAAassoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/82.clumped --score ../BrantAAassoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/84.clumped --score ../BrantAAassoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/86.clumped --score ../BrantAAassoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/88.clumped --score ../BrantAAassoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresBrantEur
+rm scores/temp*
+
+##Brant et al. AJ samples
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/02.clumped --score ../BrantAAassoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/04.clumped --score ../BrantAAassoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/06.clumped --score ../BrantAAassoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/08.clumped --score ../BrantAAassoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/12.clumped --score ../BrantAAassoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/14.clumped --score ../BrantAAassoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/16.clumped --score ../BrantAAassoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/18.clumped --score ../BrantAAassoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/22.clumped --score ../BrantAAassoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/24.clumped --score ../BrantAAassoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/26.clumped --score ../BrantAAassoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/28.clumped --score ../BrantAAassoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/42.clumped --score ../BrantAAassoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/44.clumped --score ../BrantAAassoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/46.clumped --score ../BrantAAassoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/48.clumped --score ../BrantAAassoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/62.clumped --score ../BrantAAassoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/64.clumped --score ../BrantAAassoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/66.clumped --score ../BrantAAassoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/68.clumped --score ../BrantAAassoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/82.clumped --score ../BrantAAassoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/84.clumped --score ../BrantAAassoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/86.clumped --score ../BrantAAassoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/88.clumped --score ../BrantAAassoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresBrantAJ
+rm scores/temp*
+
+##Brant et al. AA samples
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/02.clumped --score ../BrantAAassoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/04.clumped --score ../BrantAAassoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/06.clumped --score ../BrantAAassoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/08.clumped --score ../BrantAAassoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/12.clumped --score ../BrantAAassoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/14.clumped --score ../BrantAAassoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/16.clumped --score ../BrantAAassoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/18.clumped --score ../BrantAAassoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/22.clumped --score ../BrantAAassoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/24.clumped --score ../BrantAAassoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/26.clumped --score ../BrantAAassoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/28.clumped --score ../BrantAAassoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/42.clumped --score ../BrantAAassoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/44.clumped --score ../BrantAAassoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/46.clumped --score ../BrantAAassoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/48.clumped --score ../BrantAAassoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/62.clumped --score ../BrantAAassoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/64.clumped --score ../BrantAAassoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/66.clumped --score ../BrantAAassoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/68.clumped --score ../BrantAAassoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/82.clumped --score ../BrantAAassoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/84.clumped --score ../BrantAAassoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/86.clumped --score ../BrantAAassoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/88.clumped --score ../BrantAAassoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresBrantAA
+rm scores/temp*
+
+##Brant et al. Hispanic samples
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../BrantPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/02.clumped --score ../BrantAAassoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/04.clumped --score ../BrantAAassoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/06.clumped --score ../BrantAAassoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/08.clumped --score ../BrantAAassoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/12.clumped --score ../BrantAAassoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/14.clumped --score ../BrantAAassoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/16.clumped --score ../BrantAAassoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/18.clumped --score ../BrantAAassoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/22.clumped --score ../BrantAAassoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/24.clumped --score ../BrantAAassoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/26.clumped --score ../BrantAAassoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/28.clumped --score ../BrantAAassoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/42.clumped --score ../BrantAAassoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/44.clumped --score ../BrantAAassoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/46.clumped --score ../BrantAAassoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/48.clumped --score ../BrantAAassoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/62.clumped --score ../BrantAAassoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/64.clumped --score ../BrantAAassoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/66.clumped --score ../BrantAAassoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/68.clumped --score ../BrantAAassoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/82.clumped --score ../BrantAAassoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/84.clumped --score ../BrantAAassoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/86.clumped --score ../BrantAAassoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/88.clumped --score ../BrantAAassoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresBrantHis
+rm scores/temp*
+
+
+##Hui et al. Eur samples
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/02.clumped --score ../HuiAJassoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/04.clumped --score ../HuiAJassoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/06.clumped --score ../HuiAJassoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/08.clumped --score ../HuiAJassoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/12.clumped --score ../HuiAJassoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/14.clumped --score ../HuiAJassoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/16.clumped --score ../HuiAJassoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/18.clumped --score ../HuiAJassoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/22.clumped --score ../HuiAJassoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/24.clumped --score ../HuiAJassoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/26.clumped --score ../HuiAJassoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/28.clumped --score ../HuiAJassoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/42.clumped --score ../HuiAJassoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/44.clumped --score ../HuiAJassoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/46.clumped --score ../HuiAJassoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/48.clumped --score ../HuiAJassoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/62.clumped --score ../HuiAJassoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/64.clumped --score ../HuiAJassoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/66.clumped --score ../HuiAJassoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/68.clumped --score ../HuiAJassoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/82.clumped --score ../HuiAJassoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/84.clumped --score ../HuiAJassoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/86.clumped --score ../HuiAJassoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/88.clumped --score ../HuiAJassoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresHuiEur
+rm scores/temp*
+
+##Hui et al. AJ samples
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/02.clumped --score ../HuiAJassoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/04.clumped --score ../HuiAJassoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/06.clumped --score ../HuiAJassoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/08.clumped --score ../HuiAJassoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/12.clumped --score ../HuiAJassoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/14.clumped --score ../HuiAJassoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/16.clumped --score ../HuiAJassoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/18.clumped --score ../HuiAJassoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/22.clumped --score ../HuiAJassoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/24.clumped --score ../HuiAJassoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/26.clumped --score ../HuiAJassoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/28.clumped --score ../HuiAJassoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/42.clumped --score ../HuiAJassoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/44.clumped --score ../HuiAJassoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/46.clumped --score ../HuiAJassoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/48.clumped --score ../HuiAJassoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/62.clumped --score ../HuiAJassoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/64.clumped --score ../HuiAJassoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/66.clumped --score ../HuiAJassoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/68.clumped --score ../HuiAJassoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/82.clumped --score ../HuiAJassoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/84.clumped --score ../HuiAJassoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/86.clumped --score ../HuiAJassoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/88.clumped --score ../HuiAJassoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresHuiAJ
+rm scores/temp*
+
+##Hui et al. AA samples
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/02.clumped --score ../HuiAJassoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/04.clumped --score ../HuiAJassoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/06.clumped --score ../HuiAJassoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/08.clumped --score ../HuiAJassoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/12.clumped --score ../HuiAJassoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/14.clumped --score ../HuiAJassoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/16.clumped --score ../HuiAJassoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/18.clumped --score ../HuiAJassoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/22.clumped --score ../HuiAJassoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/24.clumped --score ../HuiAJassoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/26.clumped --score ../HuiAJassoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/28.clumped --score ../HuiAJassoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/42.clumped --score ../HuiAJassoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/44.clumped --score ../HuiAJassoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/46.clumped --score ../HuiAJassoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/48.clumped --score ../HuiAJassoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/62.clumped --score ../HuiAJassoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/64.clumped --score ../HuiAJassoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/66.clumped --score ../HuiAJassoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/68.clumped --score ../HuiAJassoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/82.clumped --score ../HuiAJassoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/84.clumped --score ../HuiAJassoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/86.clumped --score ../HuiAJassoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/88.clumped --score ../HuiAJassoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresHuiAA
+rm scores/temp*
+
+##Hui et al. Hispanic samples
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../HuiPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/02.clumped --score ../HuiAJassoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/04.clumped --score ../HuiAJassoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/06.clumped --score ../HuiAJassoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/08.clumped --score ../HuiAJassoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/12.clumped --score ../HuiAJassoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/14.clumped --score ../HuiAJassoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/16.clumped --score ../HuiAJassoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/18.clumped --score ../HuiAJassoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/22.clumped --score ../HuiAJassoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/24.clumped --score ../HuiAJassoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/26.clumped --score ../HuiAJassoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/28.clumped --score ../HuiAJassoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/42.clumped --score ../HuiAJassoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/44.clumped --score ../HuiAJassoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/46.clumped --score ../HuiAJassoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/48.clumped --score ../HuiAJassoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/62.clumped --score ../HuiAJassoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/64.clumped --score ../HuiAJassoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/66.clumped --score ../HuiAJassoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/68.clumped --score ../HuiAJassoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/82.clumped --score ../HuiAJassoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/84.clumped --score ../HuiAJassoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/86.clumped --score ../HuiAJassoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/88.clumped --score ../HuiAJassoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresHuiHis
+rm scores/temp*
+
+###Run meta GWAS analysis (METAL)
+generic-metal/metal
+#Load input files
+
+# === describe columns for first input file (Liu)
+MARKER rs
+ALLELE ref alt
+EFFECT effalt
+PVALUE pval 
+WEIGHTLABEL     DONTUSECOLUMN
+DEFAULTWEIGHT   35000
+PROCESS ../LiuEurAssoc.txt
+# === columns for second input file (Brant)
+MARKER rs
+ALLELE ref alt
+EFFECT effalt
+PVALUE pval 
+WEIGHTLABEL     DONTUSECOLUMN
+DEFAULTWEIGHT   7000
+PROCESS ../BrantAAassoc.txt
+# === columns for third input file (Hui)
+MARKER rs
+ALLELE ref alt
+EFFECT logOR
+PVALUE pval 
+WEIGHTLABEL     DONTUSECOLUMN
+DEFAULTWEIGHT   5500
+PROCESS ../HuiAJassoc.txt
+
+# run META analysis
+OUTFILE METAresult.tbl
+ANALYZE
+QUIT
+
+#convert results to pruning/thresholding input format
+awk -F " " '{print $1,$6}' OFS=" " "METAANALYSIS1.TBL" > metaPvals.txt
+awk -F " " '{print $1,toupper($2),$5}' OFS=" " "METAANALYSIS1.TBL" > metaAssoc.txt
+cp metaPvals.txt ../../../ImpRiskScoresNoAmbig/Meta
+cp metaAssoc.txt ../../../ImpRiskScoresNoAmbig/Meta
+
+
+##Meta GWAS Eur samples
+#extract snps based on threshold parameters -s0
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/02.clumped --score ../metaAssoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/04.clumped --score ../metaAssoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/06.clumped --score ../metaAssoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/08.clumped --score ../metaAssoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/12.clumped --score ../metaAssoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/14.clumped --score ../metaAssoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/16.clumped --score ../metaAssoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/18.clumped --score ../metaAssoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/22.clumped --score ../metaAssoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/24.clumped --score ../metaAssoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/26.clumped --score ../metaAssoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/28.clumped --score ../metaAssoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/42.clumped --score ../metaAssoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/44.clumped --score ../metaAssoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/46.clumped --score ../metaAssoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/48.clumped --score ../metaAssoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/62.clumped --score ../metaAssoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/64.clumped --score ../metaAssoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/66.clumped --score ../metaAssoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/68.clumped --score ../metaAssoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/82.clumped --score ../metaAssoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/84.clumped --score ../metaAssoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/86.clumped --score ../metaAssoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19Eur --extract clumps/88.clumped --score ../metaAssoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresMetaEur
+rm scores/temp*
+
+##Meta GWAS AJ samples -s1
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/02.clumped --score ../metaAssoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/04.clumped --score ../metaAssoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/06.clumped --score ../metaAssoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/08.clumped --score ../metaAssoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/12.clumped --score ../metaAssoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/14.clumped --score ../metaAssoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/16.clumped --score ../metaAssoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/18.clumped --score ../metaAssoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/22.clumped --score ../metaAssoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/24.clumped --score ../metaAssoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/26.clumped --score ../metaAssoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/28.clumped --score ../metaAssoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/42.clumped --score ../metaAssoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/44.clumped --score ../metaAssoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/46.clumped --score ../metaAssoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/48.clumped --score ../metaAssoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/62.clumped --score ../metaAssoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/64.clumped --score ../metaAssoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/66.clumped --score ../metaAssoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/68.clumped --score ../metaAssoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/82.clumped --score ../metaAssoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/84.clumped --score ../metaAssoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/86.clumped --score ../metaAssoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AJ --extract clumps/88.clumped --score ../metaAssoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresMetaAJ
+rm scores/temp*
+
+##Meta GWAS AA samples -s2
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/02.clumped --score ../metaAssoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/04.clumped --score ../metaAssoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/06.clumped --score ../metaAssoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/08.clumped --score ../metaAssoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/12.clumped --score ../metaAssoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/14.clumped --score ../metaAssoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/16.clumped --score ../metaAssoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/18.clumped --score ../metaAssoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/22.clumped --score ../metaAssoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/24.clumped --score ../metaAssoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/26.clumped --score ../metaAssoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/28.clumped --score ../metaAssoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/42.clumped --score ../metaAssoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/44.clumped --score ../metaAssoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/46.clumped --score ../metaAssoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/48.clumped --score ../metaAssoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/62.clumped --score ../metaAssoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/64.clumped --score ../metaAssoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/66.clumped --score ../metaAssoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/68.clumped --score ../metaAssoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/82.clumped --score ../metaAssoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/84.clumped --score ../metaAssoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/86.clumped --score ../metaAssoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19AA --extract clumps/88.clumped --score ../metaAssoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresMetaAA
+rm scores/temp*
+
+##Meta GWAS Hispanic samples -s3
+#extract snps based on threshold parameters
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.2 --out clumps/02
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.4 --out clumps/04
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.6 --out clumps/06
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 1 --clump-r2 0.8 --out clumps/08
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.2 --out clumps/12
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.4 --out clumps/14
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.6 --out clumps/16
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.5 --clump-r2 0.8 --out clumps/18
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.2 --out clumps/22
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.4 --out clumps/24
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.6 --out clumps/26
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.05 --clump-r2 0.8 --out clumps/28
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.2 --out clumps/42
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.4 --out clumps/44
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.6 --out clumps/46
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.0005 --clump-r2 0.8 --out clumps/48
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.2 --out clumps/62
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.4 --out clumps/64
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.6 --out clumps/66
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.000005 --clump-r2 0.8 --out clumps/68
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.2 --out clumps/82
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.4 --out clumps/84
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.6 --out clumps/86
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --clump ../metaPvals.txt --clump-p1 0.00000005 --clump-r2 0.8 --out clumps/88
+#generate risk scores
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/02.clumped --score ../metaAssoc.txt header --out scores/02score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/04.clumped --score ../metaAssoc.txt header --out scores/04score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/06.clumped --score ../metaAssoc.txt header --out scores/06score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/08.clumped --score ../metaAssoc.txt header --out scores/08score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/12.clumped --score ../metaAssoc.txt header --out scores/12score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/14.clumped --score ../metaAssoc.txt header --out scores/14score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/16.clumped --score ../metaAssoc.txt header --out scores/16score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/18.clumped --score ../metaAssoc.txt header --out scores/18score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/22.clumped --score ../metaAssoc.txt header --out scores/22score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/24.clumped --score ../metaAssoc.txt header --out scores/24score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/26.clumped --score ../metaAssoc.txt header --out scores/26score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/28.clumped --score ../metaAssoc.txt header --out scores/28score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/42.clumped --score ../metaAssoc.txt header --out scores/42score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/44.clumped --score ../metaAssoc.txt header --out scores/44score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/46.clumped --score ../metaAssoc.txt header --out scores/46score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/48.clumped --score ../metaAssoc.txt header --out scores/48score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/62.clumped --score ../metaAssoc.txt header --out scores/62score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/64.clumped --score ../metaAssoc.txt header --out scores/64score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/66.clumped --score ../metaAssoc.txt header --out scores/66score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/68.clumped --score ../metaAssoc.txt header --out scores/68score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/82.clumped --score ../metaAssoc.txt header --out scores/82score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/84.clumped --score ../metaAssoc.txt header --out scores/84score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/86.clumped --score ../metaAssoc.txt header --out scores/86score
+../../../plink --bfile ../../../RegenData/hg19GSArecodedImp/GSAimputedHg19His --extract clumps/88.clumped --score ../metaAssoc.txt header --out scores/88score
+#Combine results
+awk -F " " '{print $2,$6}' OFS=" " "scores/02score.profile" > scores/temp02
+awk -F " " '{print $6}' OFS=" " "scores/04score.profile" > scores/temp04
+awk -F " " '{print $6}' OFS=" " "scores/06score.profile" > scores/temp06
+awk -F " " '{print $6}' OFS=" " "scores/08score.profile" > scores/temp08
+awk -F " " '{print $6}' OFS=" " "scores/12score.profile" > scores/temp12
+awk -F " " '{print $6}' OFS=" " "scores/14score.profile" > scores/temp14
+awk -F " " '{print $6}' OFS=" " "scores/16score.profile" > scores/temp16
+awk -F " " '{print $6}' OFS=" " "scores/18score.profile" > scores/temp18
+awk -F " " '{print $6}' OFS=" " "scores/22score.profile" > scores/temp22
+awk -F " " '{print $6}' OFS=" " "scores/24score.profile" > scores/temp24
+awk -F " " '{print $6}' OFS=" " "scores/26score.profile" > scores/temp26
+awk -F " " '{print $6}' OFS=" " "scores/28score.profile" > scores/temp28
+awk -F " " '{print $6}' OFS=" " "scores/42score.profile" > scores/temp42
+awk -F " " '{print $6}' OFS=" " "scores/44score.profile" > scores/temp44
+awk -F " " '{print $6}' OFS=" " "scores/46score.profile" > scores/temp46
+awk -F " " '{print $6}' OFS=" " "scores/48score.profile" > scores/temp48
+awk -F " " '{print $6}' OFS=" " "scores/62score.profile" > scores/temp62
+awk -F " " '{print $6}' OFS=" " "scores/64score.profile" > scores/temp64
+awk -F " " '{print $6}' OFS=" " "scores/66score.profile" > scores/temp66
+awk -F " " '{print $6}' OFS=" " "scores/68score.profile" > scores/temp68
+awk -F " " '{print $6}' OFS=" " "scores/82score.profile" > scores/temp82
+awk -F " " '{print $6}' OFS=" " "scores/84score.profile" > scores/temp84
+awk -F " " '{print $6}' OFS=" " "scores/86score.profile" > scores/temp86
+awk -F " " '{print $6}' OFS=" " "scores/88score.profile" > scores/temp88
+paste -d " " scores/temp02 scores/temp04 scores/temp06 scores/temp08 scores/temp12 scores/temp14 > scores/temp1
+paste -d " " scores/temp16 scores/temp18 scores/temp22 scores/temp24 scores/temp26 scores/temp28 > scores/temp2
+paste -d " " scores/temp42 scores/temp44 scores/temp46 scores/temp48 scores/temp62 scores/temp64 > scores/temp3
+paste -d " " scores/temp66 scores/temp68 scores/temp82 scores/temp84 scores/temp86 scores/temp88 > scores/temp4
+paste -d " " scores/temp1 scores/temp2 scores/temp3 scores/temp4 > AllPlinkScoresMetaHis
+rm scores/temp*
+
+###Extract calls for top IBD SNPs (0/1/2 format)
+##Create plink files with ambiguous/duplicates removed
+#not found in imputed file: 16:50756540, 16:50763781, 22:37333972
+../../plink --bfile tempChrAll --exclude tempRemoveSNPs --make-bed --out fullGSAimputedHg19
+../../plink --bfile fullGSAimputedHg19 --snps 1:67705958, 12:40702911, 12:40740686, 16:50745926 --recode A --out topIBDsnps
+
+###Extract information on total # number used for risk scores (run in each scores directory)
+grep "valid predictors loaded." 02score.log | grep -o '[0-9]\+' > SNPcounts
+grep "valid predictors loaded." 04score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 06score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 08score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 12score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 14score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 16score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 18score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 22score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 24score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 26score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 28score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 42score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 44score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 46score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 48score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 62score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 64score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 66score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 68score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 82score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 84score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 86score.log | grep -o '[0-9]\+' >> SNPcounts
+grep "valid predictors loaded." 88score.log | grep -o '[0-9]\+' >> SNPcounts
+
+
+###Run KING to check for relatedness among IBD cases (run in /sc/private/regen/IPM-general/gettlk01/tempData folder)
+../plink --bfile ../RegenData/hg19GSArecodedImp/fullGSAimputedHg19 --keep CaseList --make-bed --out IBDcasesForKING
+/sc/arion/projects/ipm_Sema4/Data/COVID-19/MicroarrayOverall/QCandImputedFiles/king -b IBDcasesForKING.bed --fam IBDcasesForKING.fam --bim IBDcasesForKING.bim --related --degree 2 --out IBDcasesForKING
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
